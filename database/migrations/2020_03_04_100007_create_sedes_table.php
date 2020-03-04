@@ -18,11 +18,10 @@ class CreateSedesTable extends Migration
             $table->string("nombre");
             $table->integer('id_localizacion')->unsigned();
             $table->timestamps();
-
             
             $table->foreign('id_localizacion')
                     ->references('id')
-                    ->on('localizaciones');
+                    ->on('localizacions');
         });
     }
 

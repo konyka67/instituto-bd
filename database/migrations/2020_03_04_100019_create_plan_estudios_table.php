@@ -37,7 +37,7 @@ class CreatePlanEstudiosTable extends Migration
 
             $table->foreign('id_carrera')
                   ->references('id')
-                  ->on('carrreras');
+                  ->on('carreras');
         });
     }
 

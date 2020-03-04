@@ -18,7 +18,7 @@ class CreateLocalizacionsTable extends Migration
             $table->string('direccion');        
             $table->point('latitud'); 
             $table->point('longitud');   
-            $table->integer('id_ciudad');        
+            $table->integer('id_ciudad')->unsigned();        
             $table->timestamps();
             $table->foreign('id_ciudad')
             ->references('id')

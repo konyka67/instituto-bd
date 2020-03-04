@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCalificacionEstudiantesTable extends Migration
+class CreateNotaEstudiantesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateCalificacionEstudiantesTable extends Migration
      */
     public function up()
     {
-        Schema::create('calificacion_estudiantes', function (Blueprint $table) {
+        Schema::create('nota_estudiantes', function (Blueprint $table) {
             $table->integer('id_estudiante')->unsigned();
             $table->integer('id_plan')->unsigned();
             $table->integer('id_profesor')->unsigned();
@@ -47,6 +47,6 @@ class CreateCalificacionEstudiantesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('calificacion_estudiantes');
+        Schema::dropIfExists('nota_estudiantes');
     }
 }

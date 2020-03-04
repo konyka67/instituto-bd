@@ -16,11 +16,9 @@ class CreateDepartamentosTable extends Migration
         Schema::create('departamentos', function (Blueprint $table) {
             $table->increments('id');
             $table->string('nombre');   
-            $table->integer('id_pais');        
+            $table->integer('id_pais')->unsigned();            
             $table->timestamps();
-            $table->foreign('id_pais')
-            ->references('id')
-            ->on('pais');
+            $table->foreign('id_pais')->references('id')->on('pais');
         });
     }
 
