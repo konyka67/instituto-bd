@@ -17,11 +17,12 @@ class CreateUsuariosTable extends Migration
             $table->increments('id');
             $table->string('nombre_uno');
             $table->string('nombre_dos')->nullable();
-            $table->string('apellido_uno')->nullable();
+            $table->string('apellido_uno');
             $table->string('apellido_dos')->nullable();
             $table -> enum ( 'tipo',['ES' , 'AD' ,'PR','SE'] );
-            $table->string('correo',90)->nullable();
-            $table->string('contrasena')->nullable();
+            $table->string('correo');
+            $table->string('contrasena');
+            $table->string('cedula');
             $table->string('telefono',11)->nullable();
             $table->string('celular',11)->nullable();
             $table->dateTime('cumpleano')->nullable();
