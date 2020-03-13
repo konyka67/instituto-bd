@@ -15,7 +15,8 @@ class CreateSemestresTable extends Migration
     {
         Schema::create('semestres', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('numero');
+            $table->integer('numero');//primer semestre, segundo semestre
+            $table->integer('periodo');//semestral,bimestral,cuatrimestral y trimestral
             $table->timestamps();
         });
     }
