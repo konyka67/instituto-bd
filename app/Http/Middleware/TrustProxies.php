@@ -7,17 +7,26 @@ use Illuminate\Http\Request;
 
 class TrustProxies extends Middleware
 {
-    /**
+   /**
      * The trusted proxies for this application.
      *
-     * @var array|string
+     * @var array
      */
-    protected $proxies;
+    protected $proxies = '**';
 
     /**
-     * The headers that should be used to detect proxies.
+     * The current proxy header mappings.
      *
-     * @var int
+     * @var array
      */
-    protected $headers = Request::HEADER_X_FORWARDED_ALL;
+    
+    protected $headers = [
+
+            Illuminate\Http\Request::HEADER_FORWARDED    => null,
+            Illuminate\Http\Request::HEADER_CLIENT_IP    => 'X_FORWARDED_FOR',
+            Illuminate\Http\Request::HEADER_CLIENT_HOST  => null,
+            Illuminate\Http\Request::HEADER_CLIENT_PROTO => 'X_FORWARDED_PROTO',
+            Illuminate\Http\Request::HEADER_CLIENT_PORT  => 'X_FORWARDED_PORT',
+
+    ];
 }
