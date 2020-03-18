@@ -14,5 +14,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    $areas = App\Area::paginate(5);
+
+    return view('welcome',  ['areas' => $areas]);
 });
