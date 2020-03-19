@@ -18,3 +18,9 @@ Route::get('/', function () {
 
     return view('welcome',  ['areas' => $areas]);
 });
+Route::get('/paginacionweb', function () {
+    $areas = App\Area::paginate(5);
+
+    //return $areas->items();
+    return $areas;
+});
