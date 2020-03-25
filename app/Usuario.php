@@ -12,20 +12,35 @@ class Usuario extends Authenticatable implements JWTSubject
 {
     use Notifiable;
 
+    protected $table = 'usuarios';
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = [];
-
+    protected $fillable = [
+        "id",
+        "nombre_uno",
+        "nombre_dos",
+        "email",
+        "password",
+        "apellido_uno",
+        "apellido_dos",
+        "tipo",
+        "cedula",
+        "telefono",
+        "celular",
+        "foto",
+        "sex"
+    ];
     /**
      * The attributes that should be hidden for arrays.
      *
      * @var array
      */
     protected $hidden = [
-        'contrasena'
+        'password', 'remember_token',
     ];
 
     /*

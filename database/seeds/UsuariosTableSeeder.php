@@ -18,11 +18,11 @@ class UsuariosTableSeeder extends Seeder
             'nombre_dos' => 'camilo',
             'apellido_uno' => 'rodriguez',
             'apellido_dos' => 'diaz',
-            'correo' => 'admin@gmail.com',
+            'email' => 'admin@gmail.com',
             'tipo'=>'AD',
             'cedula'=>'1022353924',
             'sex'=>'M',
-            'contrasena' => bcrypt('123'),
+            'password' => bcrypt('123'),
         ]);
     }
 }

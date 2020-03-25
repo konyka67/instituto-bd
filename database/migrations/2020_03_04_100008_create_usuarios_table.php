@@ -20,13 +20,13 @@ class CreateUsuariosTable extends Migration
             $table->string('apellido_uno');
             $table->string('apellido_dos')->nullable();
             $table -> enum ( 'tipo',['ES' , 'AD' ,'PR','SE'] );
-            $table->string('correo');
-            $table->string('contrasena');
+            $table->string('email')->unique();
+            $table->string('password');
             $table->string('cedula');
             $table->string('telefono',11)->nullable();
             $table->string('celular',11)->nullable();
             $table->dateTime('cumpleano')->nullable();
-            $table->string('foto')->default("default.png");               
+            $table->string('foto')->default("default.png");
             $table -> enum ( 'sex',['F' ,'M','O'])->nullable();
             $table->timestamps();
         });
