@@ -15,10 +15,10 @@ class CreateLocalizacionsTable extends Migration
     {
         Schema::create('localizacions', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('direccion');        
-            $table->point('latitud'); 
-            $table->point('longitud');   
-            $table->integer('id_ciudad')->unsigned();        
+            $table->string('direccion');
+            $table->point('latitud');
+            $table->point('longitud');
+            $table->integer('id_ciudad')->unsigned();
             $table->timestamps();
             $table->foreign('id_ciudad')
             ->references('id')
