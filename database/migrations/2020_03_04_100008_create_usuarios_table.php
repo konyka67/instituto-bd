@@ -26,10 +26,16 @@ class CreateUsuariosTable extends Migration
             $table->string('cedula');
             $table->string('telefono',11)->nullable();
             $table->string('celular',11)->nullable();
-            $table->dateTime('cumpleano')->nullable();
+            $table->integer('id_localizacion')->unsigned()->nullable();
+            $table->dateTime('fechanacimiento')->nullable();
             $table->string('foto')->default("default.png");
             $table -> enum ( 'sex',['F' ,'M','O'])->nullable();
             $table->timestamps();
+
+
+            $table->foreign('id_localizacion')
+                    ->references('id')
+                    ->on('localizacions');
         });
     }
 
