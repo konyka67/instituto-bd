@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,9 +19,8 @@ Route::get('/', function () {
 
     return view('welcome',  ['areas' => $areas]);
 });
-Route::get('/paginacionweb', function () {
-    $areas = App\Area::paginate(5);
 
-    //return $areas->items();
-    return $areas;
-});
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
