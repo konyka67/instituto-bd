@@ -27,10 +27,8 @@ Route::get('/paginacion', function () {
 });
 
 Route::group([
-
     'middleware' => 'api',
-    'prefix' => 'auth'
-
+    'prefix' => 'auth',
 ], function ($router) {
 
     Route::post('login', 'AuthController@login');
@@ -38,6 +36,9 @@ Route::group([
     Route::post('refresh', 'AuthController@refresh');
     Route::post('me', 'AuthController@me');
     Route::post('store', 'UsuarioController@store');
+    Route::post('delete-users', 'UsuarioController@deleteUsers');
+    Route::get('all-profesors', 'UsuarioController@allProfesors');
+    Route::get('get-user', 'UsuarioController@getUser');
 
 
 });

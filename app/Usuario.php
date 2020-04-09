@@ -54,4 +54,7 @@ class Usuario extends Authenticatable implements JWTSubject
     {
         return [];
     }
+    public function localizacion()    {
+        return $this->belongsTo('App\Localizacion');
+    }
 }

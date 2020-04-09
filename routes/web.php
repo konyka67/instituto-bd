@@ -1,8 +1,13 @@
 <?php
 
+use App\Usuario;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
-
+use Illuminate\Http\Request;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -15,11 +20,46 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    $areas = App\Area::paginate(5);
+    $subject = "quiero cuquita rica para horita";
+    $for = "ing.constanza1@gmail.com";
+    $usuario = json_decode('{"id":"1","nombre":"juan camilo rodriguez","email":"admin@gmail.com"}');
 
-    return view('welcome',  ['areas' => $areas]);
+    Mail::send('email',['usuario'=>$usuario,'password'=>'123'], function($msj) use($subject,$for){
+        $msj->from("nuevojuanchaco67@gmail.com","instituto");
+        $msj->subject($subject);
+        $msj->to($for);
+    });
+    return "exitoso";
 });
+Route::get('/emailCorreo', function () {
 
+        $usuario = json_decode('{"id":"1","nombre":"juan camilo rodriguez","email":"admin@gmail.com"}');
+
+    return view('email',['usuario'=>$usuario,'password'=>'123']);
+});
+Route::get('/email', function () {
+
+    $usuario = json_decode('{"id":"1","nombre":"juan camilo rodriguez","email":"admin@gmail.com"}');
+
+    return view('email',['usuario'=>$usuario,'password'=>'123']);
+});
+// Route::post('/redireccionar', 'UsuarioController@redireccionarAccount');
+Route::post('/redireccionar',  function (Request $request) {
+    $email= $request->email;
+    $password= $request->password;
+    $id= $request->id;
+
+
+     $usuario = json_decode('{"id":"","password":"","email":""}');
+     $usuario->password=$password;
+     $usuario->email=$email;
+     $usuario->id=$id;
+    return view("redirect-email",["usuario"=>$usuario]);
+});
+Route::get('/cony',  function (Request $request) {
+
+    return Usuario::find(22);
+});
 
 Auth::routes();
 
