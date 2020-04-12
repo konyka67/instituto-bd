@@ -61,10 +61,10 @@ class UsuarioController extends Controller
 
         $usuario = new Usuario();
         $user = json_decode($request->usuario);
-        $id=$user->id;
         //cuando el id existe es porque esta actualizando los datos de la persona
-        if(!empty($id)){
+        if(!empty($user->id)){
             $usuario=Usuario::find($user->id);
+            $id=$user->id;
         }
         $usuario->nombre = $user->nombre;
         $usuario->nombre_uno = $user->nombre_uno;
@@ -102,11 +102,14 @@ class UsuarioController extends Controller
             }
         }
         $usuario->cedula = $user->cedula;
-        $usuario->tipo = 'PR';
+        $usuario->tipo = $user->tipo;
         $usuario->sex = $user->sex;
         $usuario->email = $user->email;
-        $generadorPassword= $this->generateRandomString();
-        $usuario->password = Hash::make($generadorPassword);
+
+        if(!empty($request->update) && $request->update == 'false'){
+            $generadorPassword= $this->generateRandomString();
+            $usuario->password = Hash::make($generadorPassword);
+        }
         //ALMACENAR LA IMAGEN DEL USUARIO
         if (!empty($request->hasFile('file'))) {
             $archivo = new Archivo($request->file('file'));

@@ -23,7 +23,38 @@ class UsuariosTableSeeder extends Seeder
             'tipo'=>'AD',
             'cedula'=>'1022353924',
             'sex'=>'M',
+            'celular'=>3115907753,
             'password' => bcrypt('123'),
         ]);
+
+        DB::table('usuarios')->insert([
+            'nombre'=>'constanza becerra tamayo',
+            'nombre_uno' =>'constanza',
+            'nombre_dos' => '',
+            'apellido_uno' => 'becerra',
+            'apellido_dos' => 'tamayo',
+            'email' => 'ing.constanza1@gmail.com',
+            'tipo'=>'PR',
+            'cedula'=>'1052401466',
+            'sex'=>'F',
+            'celular'=>3132657947,
+            'password' => bcrypt('123'),
+        ]);
+
+        DB::table('usuarios')->insert([
+            'nombre'=>'carlos humberto rodriguez parra',
+            'nombre_uno' =>'carlos',
+            'nombre_dos' => 'humberto',
+            'apellido_uno' => 'rodriguez',
+            'apellido_dos' => 'parra',
+            'email' => 'carlos@gmail.com',
+            'tipo'=>'PR',
+            'cedula'=>'1052401467',
+            'sex'=>'M',
+            'celular'=>3115208693,
+            'password' => bcrypt('123'),
+        ]);
+
+
     }
 }
