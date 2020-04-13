@@ -14,12 +14,13 @@ class CreateConfiguracionesTable extends Migration
     public function up()
     {
         Schema::create('configuraciones', function (Blueprint $table) {
-            $table->string("key",10)->primary();
-            $table->string("foto")->nullable();
-            $table->string("value")->nullable();
-            $table->mediumText('value_medium')->nullable();
-            $table->longText('value_long')->nullable();
-            $table->timestamps();
+                $table->string("key",10)->primary();
+                $table->string("foto")->nullable();
+                $table->string("value")->nullable();
+                $table->mediumText('value_medium')->nullable();
+                $table->longText('value_long')->nullable();
+                $table->timestamps();
+
         });
     }
 

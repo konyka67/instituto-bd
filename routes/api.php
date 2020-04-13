@@ -37,8 +37,22 @@ Route::group([
     Route::post('me', 'AuthController@me');
     Route::post('store', 'UsuarioController@store');
     Route::post('delete-users', 'UsuarioController@deleteUsers');
-    Route::get('all-profesors', 'UsuarioController@allProfesors');
+    Route::get('all-users-tipo', 'UsuarioController@allUsersTipo');
     Route::get('get-user', 'UsuarioController@getUser');
-
-
 });
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'sede',
+], function ($router) {
+    Route::post('store', 'SedeController@store');
+});
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'configuracion',
+], function ($router) {
+    Route::post('store', 'ConfiguracionController@store');
+    Route::get('get-all-configuration', 'ConfiguracionController@getAllConfiguration');
+});
+

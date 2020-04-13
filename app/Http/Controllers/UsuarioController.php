@@ -215,11 +215,11 @@ class UsuarioController extends Controller
         //
     }
 
-    public function allProfesors(Request $request){
+    public function allUsersTipo(Request $request){
         if(!empty($request->buscar)){
-          return response()->json(["success"=>true,"usuario" => Usuario::where("tipo","PR")->where("nombre","like","%".$request->buscar."%")->paginate(5)]);
+          return response()->json(["success"=>true,"usuario" => Usuario::where("tipo",$request->tipo)->where("nombre","like","%".$request->buscar."%")->paginate(5)]);
           }
-        return response()->json(["success"=>true,"usuario" => Usuario::where("tipo","PR")->paginate(5)]);
+        return response()->json(["success"=>true,"usuario" => Usuario::where("tipo",$request->tipo)->paginate(5)]);
     }
 
     public function deleteUsers(Request $request){
@@ -227,7 +227,7 @@ class UsuarioController extends Controller
             $usuario =Usuario::find($usuario["id"]);
             $usuario->delete();
         }
-        return $this->allProfesors($request);
+        return $this->allUsersTipo($request);
     }
 
     public function getUser(Request $request)
