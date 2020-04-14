@@ -46,6 +46,8 @@ Route::group([
     'prefix' => 'sede',
 ], function ($router) {
     Route::post('store', 'SedeController@store');
+    Route::get('get-all-pagination', 'SedeController@getPagination');
+
 });
 
 Route::group([

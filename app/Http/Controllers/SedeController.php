@@ -67,6 +67,41 @@ class SedeController extends Controller
         return response()->json(["success" => false]);
     }
 
+    public function getPagination(Request $request){
+
+        if(!empty($request->buscar)){
+        $sedesPagination=Localizacion::join("sedes","localizacions.id","sedes.id_localizacion")
+                             ->where("nombre","like","%".$request->buscar."%")
+                             ->select('sedes.id',
+                               'sedes.nombre',
+                               'sedes.created_at',
+                               'sedes.updated_at',
+                               'sedes.id_localizacion',
+                               'localizacions.direccion',
+                               'localizacions.latitud',
+                               'localizacions.longitud',
+                               'localizacions.id_ciudad',
+                               'localizacions.created_at as created_at_l',
+                               'localizacions.updated_at as updated_at_l')
+                             ->paginate(5);
+        }else{
+           $sedesPagination=Localizacion::join("sedes","localizacions.id","sedes.id_localizacion")
+                        ->select('sedes.id',
+                        'sedes.nombre',
+                        'sedes.created_at',
+                        'sedes.updated_at',
+                        'sedes.id_localizacion',
+                        'localizacions.direccion',
+                        'localizacions.latitud',
+                        'localizacions.longitud',
+                        'localizacions.id_ciudad',
+                        'localizacions.created_at as created_at_l',
+                        'localizacions.updated_at as updated_at_l')
+                        ->paginate(5);
+        }
+        return response()->json(["sede" => $sedesPagination]);
+    }
+
     /**
      * Display the specified resource.
      *
