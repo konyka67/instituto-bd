@@ -14,6 +14,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+
 class UsuarioController extends Controller
 {
 
@@ -54,7 +55,7 @@ class UsuarioController extends Controller
      */
     public function store(Request $request)
     {
-        $validacion=$this->validaciones($request);
+        $validacion = $this->validaciones($request);
         if ($validacion->fails()) {
             return response()->json($validacion->errors(), 422);
         }
@@ -62,42 +63,42 @@ class UsuarioController extends Controller
         $usuario = new Usuario();
         $user = json_decode($request->usuario);
         //cuando el id existe es porque esta actualizando los datos de la persona
-        if(!empty($user->id)){
-            $usuario=Usuario::find($user->id);
-            $id=$user->id;
+        if (!empty($user->id)) {
+            $usuario = Usuario::find($user->id);
+            $id = $user->id;
         }
         $usuario->nombre = $user->nombre;
         $usuario->nombre_uno = $user->nombre_uno;
-        if(!empty($user->nombre_dos)){
+        if (!empty($user->nombre_dos)) {
             $usuario->nombre_dos = $user->nombre_dos;
         }
         $usuario->apellido_uno = $user->apellido_uno;
-        if(!empty($user->apellido_dos)){
+        if (!empty($user->apellido_dos)) {
             $usuario->apellido_dos = $user->apellido_dos;
         }
-        if(!empty($user->telefono)){
+        if (!empty($user->telefono)) {
             $usuario->telefono = $user->telefono;
         }
         $usuario->celular = $user->celular;
         //FECHA DE NACIMIENTO
         if (!empty($user->fechanacimiento)) {
-            $format=str_replace('Z', '',str_replace('T', ' ', $user->fechanacimiento));
-            $usuario->fechanacimiento = Carbon::createFromFormat("Y-m-d H:i:s.u",$format);
+            $format = str_replace('Z', '', str_replace('T', ' ', $user->fechanacimiento));
+            $usuario->fechanacimiento = Carbon::createFromFormat("Y-m-d H:i:s.u", $format);
         }
         $localizacion = $user->localizacion;
         //PARA BUSCAR O GURDAR LA LOCALIZACION
         if (!empty($localizacion)) {
             $direccion = new Direccion($localizacion->direccion);
             $direccion->ejecutar();
-            if(!$direccion->isEmpty()){
+            if (!$direccion->isEmpty()) {
                 $pais = new Pais();
                 $departamento = new Departamento();
                 $ciudad = new Ciudad();
                 $pais = $pais->buscar($direccion->getPais());
-                $departamento = $departamento->buscar($direccion->getDepartamento(),$pais);
-                $ciudad = $ciudad->buscar($direccion->getCiudad(),$departamento);
+                $departamento = $departamento->buscar($direccion->getDepartamento(), $pais);
+                $ciudad = $ciudad->buscar($direccion->getCiudad(), $departamento);
                 $localizacionTable = new Localizacion();
-                $localizacionTable = $localizacionTable->buscar($localizacion->latitud,$localizacion->longitud,$direccion->getDireccion(),$ciudad);
+                $localizacionTable = $localizacionTable->buscar($localizacion->latitud, $localizacion->longitud, $direccion->getDireccion(), $ciudad);
                 $usuario->id_localizacion = $localizacionTable->id;
             }
         }
@@ -106,8 +107,8 @@ class UsuarioController extends Controller
         $usuario->sex = $user->sex;
         $usuario->email = $user->email;
 
-        if(!empty($request->update) && $request->update == 'false'){
-            $generadorPassword= $this->generateRandomString();
+        if (!empty($request->update) && $request->update == 'false') {
+            $generadorPassword = $this->generateRandomString();
             $usuario->password = Hash::make($generadorPassword);
         }
         //ALMACENAR LA IMAGEN DEL USUARIO
@@ -115,12 +116,58 @@ class UsuarioController extends Controller
             $archivo = new Archivo($request->file('file'));
             $archivo->guardarArchivo($usuario);
             $usuario->foto = $archivo->getArchivoNombreExtension();
+        } else {
+
+            switch ($usuario->tipo) {
+                case 'PR':
+                    switch ($usuario->sex) {
+                        case 'M':
+                            $usuario->foto = 'default_profesor_m.png';
+                            break;
+                        case 'F':
+                            $usuario->foto = 'default_profesor_f.png';
+                            break;
+                    }
+                    break;
+
+                case 'AD':
+                    switch ($usuario->sex) {
+                        case 'M':
+                            $usuario->foto = 'default_admin_m.png';
+                            break;
+                        case 'F':
+                            $usuario->foto = 'default_admin_f.png';
+                            break;
+                    }
+                    break;
+
+                case 'ES':
+                    switch ($usuario->sex) {
+                        case 'M':
+                            $usuario->foto = 'default_estudiante_m.png';
+                            break;
+                        case 'F':
+                            $usuario->foto = 'default_estudiante_F.png';
+                            break;
+                    }
+                    break;
+                default:
+                    switch ($usuario->sex) {
+                        case 'M':
+                            $usuario->foto = 'default_estudiante_m.png';
+                            break;
+                        case 'F':
+                            $usuario->foto = 'default_estudiante_F.png';
+                            break;
+                    }
+                    break;
+            }
         }
         $usuario->save();
         //cuando el id existe es porque esta actualizando los datos de la persona
-        if(empty($id)){
-            $email =new Email();
-            $email->send("Institución educativa",$usuario->email,["usuario"=>$usuario,"password"=>$generadorPassword]);
+        if (empty($id)) {
+            $email = new Email();
+            $email->send("Institución educativa", $usuario->email, ["usuario" => $usuario, "password" => $generadorPassword]);
         }
         return response()->json(["success" => true]);
     }
@@ -139,8 +186,9 @@ class UsuarioController extends Controller
         return $randomString;
     }
 
-    function validaciones(Request $request){
-        $regla   =[
+    function validaciones(Request $request)
+    {
+        $regla   = [
             'nombre_uno'    => 'required',
             'apellido_uno'  => 'required',
             'nombre'        => 'required',
@@ -149,13 +197,12 @@ class UsuarioController extends Controller
             'celular'       => 'required',
             'sex'           => 'required'
         ];
-        $mensaje =[
-            'required'=>'El campo :attribute es obligatorio'
+        $mensaje = [
+            'required' => 'El campo :attribute es obligatorio'
         ];
 
-        $validator=Validator::make((array) json_decode($request->usuario),$regla,$mensaje);
+        $validator = Validator::make((array) json_decode($request->usuario), $regla, $mensaje);
         return  $validator;
-
     }
     /**
      * Display the specified resource.
@@ -191,17 +238,18 @@ class UsuarioController extends Controller
         //
     }
 
-    public function redireccionarAccount(Request $request){
-        $email= $request->email;
-        $password= $request->password;
-        $id= $request->id;
+    public function redireccionarAccount(Request $request)
+    {
+        $email = $request->email;
+        $password = $request->password;
+        $id = $request->id;
 
 
-         $usuario = json_decode('{"id":"","password":"","email":""}');
-         $usuario->password=$password;
-         $usuario->email=$email;
-         $usuario->id=$id;
-        return view('redirect-email',["usuario"=>$usuario]);
+        $usuario = json_decode('{"id":"","password":"","email":""}');
+        $usuario->password = $password;
+        $usuario->email = $email;
+        $usuario->id = $id;
+        return view('redirect-email', ["usuario" => $usuario]);
     }
 
     /**
@@ -215,16 +263,56 @@ class UsuarioController extends Controller
         //
     }
 
-    public function allUsersTipo(Request $request){
-        if(!empty($request->buscar)){
-          return response()->json(["success"=>true,"usuario" => Usuario::where("tipo",$request->tipo)->where("nombre","like","%".$request->buscar."%")->paginate(5)]);
-          }
-        return response()->json(["success"=>true,"usuario" => Usuario::where("tipo",$request->tipo)->paginate(5)]);
+    public function allUsersTipo(Request $request)
+    {
+        if (!empty($request->buscar)) {
+            $usuariosPagination = Localizacion::join(
+                "usuarios",
+                "localizacions.id",
+                "usuarios.id_localizacion"
+            )
+                ->where("usuarios.tipo", $request->tipo)
+                ->where("usuarios.nombre", "like", "%" . $request->buscar . "%")
+                ->orderBy('usuarios.id', 'asc')
+                ->select(
+                    'usuarios.*',
+                    'localizacions.direccion',
+                    'localizacions.latitud',
+                    'localizacions.longitud',
+                    'localizacions.id_ciudad',
+                    'localizacions.created_at as created_at_l',
+                    'localizacions.updated_at as updated_at_l'
+                )
+                ->paginate(5);
+
+            return response()->json(["success" => true, "usuario" => $usuariosPagination]);
+        } else {
+            $usuariosPagination = Localizacion::join(
+                "usuarios",
+                "localizacions.id",
+                "usuarios.id_localizacion"
+            )
+                ->where("usuarios.tipo", $request->tipo)
+                ->orderBy('usuarios.id', 'asc')
+                ->select(
+                    'usuarios.*',
+                    'localizacions.direccion',
+                    'localizacions.latitud',
+                    'localizacions.longitud',
+                    'localizacions.id_ciudad',
+                    'localizacions.created_at as created_at_l',
+                    'localizacions.updated_at as updated_at_l'
+                )
+                ->paginate(5);
+
+            return response()->json(["success" => true, "usuario" => $usuariosPagination]);
+        }
     }
 
-    public function deleteUsers(Request $request){
+    public function deleteUsers(Request $request)
+    {
         foreach ($request->usuarios as $usuario) {
-            $usuario =Usuario::find($usuario["id"]);
+            $usuario = Usuario::find($usuario["id"]);
             $usuario->delete();
         }
         return $this->allUsersTipo($request);
@@ -232,9 +320,9 @@ class UsuarioController extends Controller
 
     public function getUser(Request $request)
     {
-        $usuario =Usuario::where("id",$request->id)->first();
-        $localizacion =Localizacion::find($usuario->id_localizacion);
-        $usuario->localizacion=$localizacion;
-        return response()->json(["success"=>true,"usuario" =>$usuario]);
+        $usuario = Usuario::where("id", $request->id)->first();
+        $localizacion = Localizacion::find($usuario->id_localizacion);
+        $usuario->localizacion = $localizacion;
+        return response()->json(["success" => true, "usuario" => $usuario]);
     }
 }

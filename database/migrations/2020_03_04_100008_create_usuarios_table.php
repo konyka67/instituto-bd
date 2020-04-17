@@ -21,7 +21,7 @@ class CreateUsuariosTable extends Migration
             $table->string('apellido_uno');
             $table->string('apellido_dos')->nullable();
             $table -> enum ( 'tipo',['ES' , 'AD' ,'PR','SE'] );
-            $table->string('email')->unique();
+            $table->string('email');
             $table->string('password');
             $table->string('cedula');
             $table->string('telefono',11)->nullable();
@@ -31,7 +31,6 @@ class CreateUsuariosTable extends Migration
             $table->string('foto')->default("default.png");
             $table -> enum ( 'sex',['F' ,'M','O'])->nullable();
             $table->timestamps();
-
 
             $table->foreign('id_localizacion')
                     ->references('id')

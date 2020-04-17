@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Localizacion;
+use App\Role;
 use App\Usuario;
 
 class AuthController extends Controller
@@ -39,7 +41,10 @@ class AuthController extends Controller
      */
     public function me()
     {
-        return response()->json(auth()->user());
+        $usuario=Usuario::find(auth()->user()->id);
+        $localizacion=Localizacion::find($usuario->id_localizacion);
+        $usuario->localizacion=$localizacion;
+        return response()->json($usuario);
     }
 
     /**
@@ -73,9 +78,14 @@ class AuthController extends Controller
      */
     protected function respondWithToken($token)
     {
+        $usuario=Usuario::find(auth()->user()->id);
+        $localizacion=Localizacion::find($usuario->id_localizacion);
+        $usuario->localizacion=$localizacion;
+
+
         return response()->json([
             'access_token' => $token,
-            'usuario'=>auth()->user(),
+            'usuario'=>$usuario,
             'token_type' => 'bearer',
             'expires_in' => auth('api')->factory()->getTTL() * 60
         ]);

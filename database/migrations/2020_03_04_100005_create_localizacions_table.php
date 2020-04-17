@@ -16,8 +16,8 @@ class CreateLocalizacionsTable extends Migration
         Schema::create('localizacions', function (Blueprint $table) {
             $table->increments('id');
             $table->string('direccion');
-            $table->string('latitud',20);
-            $table->string('longitud',20);
+            $table->decimal('latitud', 10, 7);
+            $table->decimal('longitud', 10, 7);
             $table->integer('id_ciudad')->unsigned();
             $table->timestamps();
             $table->foreign('id_ciudad')

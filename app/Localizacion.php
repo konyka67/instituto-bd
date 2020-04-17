@@ -8,6 +8,11 @@ class Localizacion extends Model
 {
     protected $table = 'localizacions';
 
+    protected $casts = [
+        'latitud' => 'double',
+        'longitud' => 'double',
+    ];
+
     /**
      * The attributes that are mass assignable.
      *

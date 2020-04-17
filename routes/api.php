@@ -47,6 +47,20 @@ Route::group([
 ], function ($router) {
     Route::post('store', 'SedeController@store');
     Route::get('get-all-pagination', 'SedeController@getPagination');
+    Route::post('delete', 'SedeController@delete');
+    Route::get('get', 'SedeController@get');
+
+});
+
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'escuela',
+], function ($router) {
+    Route::post('store', 'EscuelaController@store');
+    Route::get('get-all-pagination', 'EscuelaController@getPagination');
+    Route::post('delete', 'EscuelaController@delete');
+    Route::get('get', 'EscuelaController@get');
 
 });
 
