@@ -84,7 +84,11 @@ class EscuelaController extends Controller
     {
 
         if (!empty($request->buscar)) {
-            $escuelasPagination = Sede::join("escuelas", "sedes.id", "escuelas.id_sede")
+            $escuelasPagination = Sede::join(
+                "escuelas",
+                "sedes.id",
+                "escuelas.id_sede"
+            )
                 ->where("escuelas.nombre", "like", "%" . $request->buscar . "%")
                 ->orderBy('escuelas.id', 'asc')
                 ->select(
@@ -96,8 +100,11 @@ class EscuelaController extends Controller
                 )
                 ->paginate(5);
         } else {
-            $escuelasPagination = Sede::join("escuelas", "sedes.id", "escuelas.id_sede")
-                ->orderBy('escuelas.id', 'asc')
+            $escuelasPagination = Sede::join(
+                "escuelas",
+                "sedes.id",
+                "escuelas.id_sede"
+            )->orderBy('escuelas.id', 'asc')
                 ->select(
                     'escuelas.*',
                     'sedes.nombre as nombre_s',
@@ -166,14 +173,17 @@ class EscuelaController extends Controller
 
     public function get(Request $request)
     {
-        $escuela = Sede::join("escuelas", "sedes.id", "esceulas.id_sede")
-            ->select(
-                'escuelas.*',
-                'sedes.nombre',
-                'sedes.created_at_s',
-                'sedes.updated_at_s',
-                'sedes.id_localizacion'
-            )->firts();
+        $escuela = Sede::join(
+            "escuelas",
+            "sedes.id",
+            "esceulas.id_sede"
+        )->select(
+            'escuelas.*',
+            'sedes.nombre',
+            'sedes.created_at_s',
+            'sedes.updated_at_s',
+            'sedes.id_localizacion'
+        )->firts();
 
         return response()->json(["success" => true, "escuela" => $escuela]);
     }

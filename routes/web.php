@@ -1,5 +1,6 @@
 <?php
 
+use App\Escuela;
 use App\Usuario;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -8,6 +9,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -58,7 +61,10 @@ Route::post('/redireccionar',  function (Request $request) {
 });
 Route::get('/cony',  function (Request $request) {
 
-    return Usuario::find(22);
+
+    DB::statement(DB::raw('SET @rownum = 0'));
+    $escuelas=Escuela::where("id",">","0")->select(DB::raw('@rownum := @rownum + 1 as fila'),'escuelas.*')->paginate(5);
+    return $escuelas;
 });
 
 Auth::routes();

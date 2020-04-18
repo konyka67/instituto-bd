@@ -85,8 +85,11 @@ class SedeController extends Controller
     {
 
         if (!empty($request->buscar)) {
-            $sedesPagination = Localizacion::join("sedes", "localizacions.id", "sedes.id_localizacion")
-                ->where("nombre", "like", "%" . $request->buscar . "%")
+            $sedesPagination = Localizacion::join(
+                "sedes",
+                "localizacions.id",
+                "sedes.id_localizacion"
+            )->where("nombre", "like", "%" . $request->buscar . "%")
                 ->orderBy('sedes.id', 'asc')
                 ->select(
                     'sedes.id',
@@ -103,7 +106,11 @@ class SedeController extends Controller
                 )
                 ->paginate(5);
         } else {
-            $sedesPagination = Localizacion::join("sedes", "localizacions.id", "sedes.id_localizacion")
+            $sedesPagination = Localizacion::join(
+                "sedes",
+                "localizacions.id",
+                "sedes.id_localizacion"
+            )
                 ->orderBy('sedes.id', 'asc')
                 ->select(
                     'sedes.id',

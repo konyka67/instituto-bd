@@ -66,6 +66,17 @@ Route::group([
 
 Route::group([
     'middleware' => 'api',
+    'prefix' => 'escuela-usuario',
+], function ($router) {
+    Route::post('store', 'EscuelaUsuarioController@store');
+    Route::get('get-all-pagination', 'EscuelaUsuarioController@getPagination');
+    Route::post('delete', 'EscuelaUsuarioController@delete');
+    Route::get('get', 'EscuelaUsuarioController@get');
+
+});
+
+Route::group([
+    'middleware' => 'api',
     'prefix' => 'configuracion',
 ], function ($router) {
     Route::post('store', 'ConfiguracionController@store');
