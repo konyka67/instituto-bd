@@ -16,6 +16,14 @@ class CreateProgramasTable extends Migration
         Schema::create('programas', function (Blueprint $table) {
             $table->increments('id');
             $table->string('nombre');
+            $table->mediumText('mision')->nullable();
+            $table->mediumText('vision')->nullable();
+            $table->text('justificacion')->nullable();
+            $table->text('description')->nullable();
+            $table->text('competencias')->nullable();
+            $table->text('perfiles')->nullable();
+            $table->text('caracteristicas')->nullable();
+            $table->text('propositos')->nullable();
             $table->timestamps();
         });
     }

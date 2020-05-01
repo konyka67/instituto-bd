@@ -26,9 +26,13 @@ class Archivo
      * @param  $nombre
      * @return string
      */
-    private function nombreRutaArchivos($usuario, $extension, $nombre)
+    private function nombreRutaArchivos($usuario, $nombre)
     {
-        return $usuario->tipo . '/' . $usuario->cedula . '/' . $nombre;
+        if(!empty($usuario) && !is_null($usuario)){
+
+            return $usuario->tipo . '/' . $usuario->cedula . '/' . $nombre;
+        }
+        return 'img/'.$nombre;
     }
 
     /**
@@ -41,7 +45,6 @@ class Archivo
 
         return $this->nombreRutaArchivos(
             $usuario,
-            $this->file->getClientOriginalExtension(),
             $this->file->getClientOriginalName()
         );
     }
@@ -57,6 +60,7 @@ class Archivo
             File::get($this->file)
         );
     }
+
     public function getArchivoNombreExtension()
     {
         return $this->file->getClientOriginalName();

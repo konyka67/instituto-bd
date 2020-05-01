@@ -14,30 +14,28 @@ class CreatePlanEstudiosTable extends Migration
     public function up()
     {
         Schema::create('plan_estudios', function (Blueprint $table) {
-            $table->increments('id');      
-            $table->integer('cantidad_credito');
+            $table->primary(['id_programa', 'id_materia','id_plan']);
+            $table->integer('id_programa')->unsigned();
             $table->integer('id_materia')->unsigned();
-            $table->integer('id_semestre')->unsigned();
-            $table->integer('id_carrera')->unsigned();
             $table->integer('id_area')->unsigned();
-                    
+            $table->integer('id_plan')->unsigned();
+            $table->tinyInteger('periodo')->unsigned();
+            $table->integer('fecha_inicial')->unsigned();
+            $table->integer('fecha_hasta')->unsigned();
             $table->timestamps();
-
             $table->foreign('id_area')
-                  ->references('id')
-                  ->on('areas');
-
+                ->references('id')
+                ->on('areas');
             $table->foreign('id_materia')
-                  ->references('id')
-                  ->on('materias');
+                ->references('id')
+                ->on('materias');
+            $table->foreign('id_programa')
+                ->references('id')
+                ->on('programas');
 
-            $table->foreign('id_semestre')
-                  ->references('id')
-                  ->on('semestres');
-
-            $table->foreign('id_carrera')
-                  ->references('id')
-                  ->on('carreras');
+            $table->foreign('id_plan')
+                ->references('id')
+                ->on('planes');
         });
     }
 

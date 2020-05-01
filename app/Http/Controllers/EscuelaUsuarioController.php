@@ -90,7 +90,7 @@ class EscuelaUsuarioController extends Controller
     }
     public function getPagination(Request $request)
     {
-        if (!empty($request->buscar)) {
+        if( !empty($request->buscar) && $request->buscar !== 'undefined'){
             $usuariosPagination = Usuario::join(
                 "escuela_usuarios",
                 "usuarios.id",
@@ -174,6 +174,13 @@ class EscuelaUsuarioController extends Controller
     public function destroy($id)
     {
         //
+    }
+    public function delete(Request $request)
+    {
+        foreach ($request["escuela-usuario"] as $escuela_usuario) {
+            EscuelaUsuario::where('id_escuela', $escuela_usuario["escuela"]["id"])->where('id_usuario', $escuela_usuario["usuario"]["id"])->delete();
+        }
+        return response()->json(["success" => true]);
     }
 
     function validaciones($array)

@@ -83,7 +83,7 @@ class EscuelaController extends Controller
     public function getPagination(Request $request)
     {
 
-        if (!empty($request->buscar)) {
+        if( !empty($request->buscar) && $request->buscar !== 'undefined'){
             $escuelasPagination = Sede::join(
                 "escuelas",
                 "sedes.id",

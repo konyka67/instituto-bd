@@ -47,6 +47,8 @@ class AuthController extends Controller
         return response()->json($usuario);
     }
 
+
+
     /**
      * Log the user out (Invalidate the token).
      *
@@ -81,7 +83,7 @@ class AuthController extends Controller
         $usuario=Usuario::find(auth()->user()->id);
         $localizacion=Localizacion::find($usuario->id_localizacion);
         $usuario->localizacion=$localizacion;
-
+        $usuario->token=$token;
 
         return response()->json([
             'access_token' => $token,

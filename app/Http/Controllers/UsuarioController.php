@@ -11,6 +11,7 @@ use App\Email;
 use App\Pais;
 use App\Usuario;
 use Carbon\Carbon;
+use Illuminate\Foundation\Auth\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -25,7 +26,6 @@ class UsuarioController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login']]);
     }
 
     /**
@@ -100,6 +100,7 @@ class UsuarioController extends Controller
                 $localizacionTable = new Localizacion();
                 $localizacionTable = $localizacionTable->buscar($localizacion->latitud, $localizacion->longitud, $direccion->getDireccion(), $ciudad);
                 $usuario->id_localizacion = $localizacionTable->id;
+
             }
         }
         $usuario->cedula = $user->cedula;
@@ -169,7 +170,11 @@ class UsuarioController extends Controller
             $email = new Email();
             $email->send("Institución educativa", $usuario->email, ["usuario" => $usuario, "password" => $generadorPassword]);
         }
-        return response()->json(["success" => true]);
+        if (!empty($user->token)) {
+            $usuario->token=$user->token;
+        }
+        $usuario->localizacion = $localizacionTable;
+        return response()->json(["success" => true,"usuario"=>$usuario]);
     }
 
     /**
@@ -265,7 +270,7 @@ class UsuarioController extends Controller
 
     public function allUsersTipo(Request $request)
     {
-        if (!empty($request->buscar)) {
+        if( !empty($request->buscar) && $request->buscar !== 'undefined'){
             $usuariosPagination = Localizacion::join(
                 "usuarios",
                 "localizacions.id",
@@ -325,4 +330,5 @@ class UsuarioController extends Controller
         $usuario->localizacion = $localizacion;
         return response()->json(["success" => true, "usuario" => $usuario]);
     }
+
 }

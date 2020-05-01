@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Archivo;
 use App\Configuracione;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+
 class ConfiguracionController extends Controller
 {
     /**
@@ -35,41 +37,63 @@ class ConfiguracionController extends Controller
      */
     public function store(Request $request)
     {
-        $validacion=$this->validaciones($request);
-        if ($validacion->fails()) {
-            return response()->json($validacion->errors(), 422);
-        }
+        if (empty($request->img)) {
 
+            $validacion = $this->validaciones($request);
+            if ($validacion->fails()) {
+                return response()->json($validacion->errors(), 422);
+            }
 
-        $configuracion=new Configuracione();
+            $configuracion = new Configuracione();
 
-        $configuracionAux=Configuracione::find($request->configuracion["key"]);
-        if(!empty($configuracionAux)){
-            $configuracion=$configuracionAux;
-        }
+            $configuracionAux = Configuracione::find($request->configuracion["key"]);
+            if (!empty($configuracionAux)) {
+                $configuracion = $configuracionAux;
+            }
 
-        $configuracion->key=$request->configuracion["key"];
-        if(!empty($request->configuracion["value"])){
-           $configuracion->value=$request->configuracion["value"];
+            $configuracion->key = $request->configuracion["key"];
+            if (!empty($request->configuracion["value"])) {
+                $configuracion->value = $request->configuracion["value"];
+            }
+            if (!empty($request->configuracion["value_medium"])) {
+                $configuracion->value = $request->configuracion["value_medium"];
+            }
+            if (!empty($request->configuracion["value_long"])) {
+                $configuracion->value = $request->configuracion["value_long"];
+            }
+            $configuracion->save();
+            return response()->json(["success" => true, "configuraciones" => Configuracione::all()]);
+        }else{
+            $configuracion = new Configuracione();
+            $conf = json_decode($request->configuracion);
+            $configuracionAux = Configuracione::find($conf->key);
+
+            if (!empty($configuracionAux)) {
+                $configuracion = $configuracionAux;
+            }
+            $configuracion->key = $conf->key;
+
+            if (!empty($request->hasFile('file'))) {
+                $archivo = new Archivo($request->file('file'));
+                $archivo->guardarArchivo(null);
+                $configuracion->value = $archivo->getArchivoNombreExtension();
+            }
+
+            $configuracion->save();
+
+            return response()->json(["success" => true, "configuracion" => $configuracion]);
         }
-        if(!empty($request->configuracion["value_medium"])){
-           $configuracion->value=$request->configuracion["value_medium"];
-        }
-        if(!empty($request->configuracion["value_long"])){
-           $configuracion->value=$request->configuracion["value_long"];
-        }
-        $configuracion->save();
-        return response()->json(["success" => true,"configuraciones" => Configuracione::all()]);
     }
-     /**
+    /**
      * getConfiguration a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function getAllConfiguration (Request $request){
+    public function getAllConfiguration(Request $request)
+    {
 
-        return response()->json(["success" => true,"configuraciones" => Configuracione::all()]);
+        return response()->json(["success" => true, "configuraciones" => Configuracione::all()]);
     }
 
     /**
@@ -117,16 +141,16 @@ class ConfiguracionController extends Controller
         //
     }
 
-    function validaciones(Request $request){
-        $regla   =[
+    function validaciones(Request $request)
+    {
+        $regla   = [
             'key'    => 'required',
         ];
-        $mensaje =[
-            'required'=>'El campo :attribute es obligatorio'
+        $mensaje = [
+            'required' => 'El campo :attribute es obligatorio'
         ];
 
-        $validator=Validator::make($request->configuracion,$regla,$mensaje);
+        $validator = Validator::make($request->configuracion, $regla, $mensaje);
         return  $validator;
-
     }
 }

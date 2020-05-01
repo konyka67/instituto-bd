@@ -23,6 +23,7 @@ class UsuariosTableSeeder extends Seeder
             'tipo'=>'AD',
             'cedula'=>'1022353924',
             'sex'=>'M',
+            'id_localizacion'=>1,
             'celular'=>3115907753,
             'password' => bcrypt('123'),
         ]);

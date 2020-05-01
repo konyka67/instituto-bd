@@ -1,6 +1,7 @@
 <?php
 
 use App\Escuela;
+use App\Materia;
 use App\Usuario;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -61,10 +62,7 @@ Route::post('/redireccionar',  function (Request $request) {
 });
 Route::get('/cony',  function (Request $request) {
 
-
-    DB::statement(DB::raw('SET @rownum = 0'));
-    $escuelas=Escuela::where("id",">","0")->select(DB::raw('@rownum := @rownum + 1 as fila'),'escuelas.*')->paginate(5);
-    return $escuelas;
+    return Materia::orderBy("id")->paginate(5);
 });
 
 Auth::routes();

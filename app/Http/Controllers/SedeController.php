@@ -84,7 +84,7 @@ class SedeController extends Controller
     public function getPagination(Request $request)
     {
 
-        if (!empty($request->buscar)) {
+        if( !empty($request->buscar) && $request->buscar !== 'undefined'){
             $sedesPagination = Localizacion::join(
                 "sedes",
                 "localizacions.id",

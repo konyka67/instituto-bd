@@ -1,5 +1,6 @@
 <?php
 
+use App\Escuela;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,6 +18,12 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::middleware('auth:api')->get('/escuelas', function () {
+    $esceulas = Escuela::all()->paginate(5);
+    return response()->json(["escuelas"=>$esceulas]);
+});
+
 
 
 Route::get('/paginacion', function () {
@@ -41,6 +48,10 @@ Route::group([
     Route::get('get-user', 'UsuarioController@getUser');
 });
 
+// Route::get('v1/users','UsuarioController@getDian');
+// Route::post('v1/users','UsuarioController@postDian');
+
+
 Route::group([
     'middleware' => 'api',
     'prefix' => 'sede',
@@ -49,7 +60,16 @@ Route::group([
     Route::get('get-all-pagination', 'SedeController@getPagination');
     Route::post('delete', 'SedeController@delete');
     Route::get('get', 'SedeController@get');
+});
 
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'materia',
+], function ($router) {
+    Route::post('store', 'MateriaController@store');
+    Route::get('get-all-pagination', 'MateriaController@getPagination');
+    Route::post('delete', 'MateriaController@delete');
+    Route::get('get', 'MateriaController@get');
 });
 
 
@@ -61,7 +81,6 @@ Route::group([
     Route::get('get-all-pagination', 'EscuelaController@getPagination');
     Route::post('delete', 'EscuelaController@delete');
     Route::get('get', 'EscuelaController@get');
-
 });
 
 Route::group([
@@ -72,7 +91,6 @@ Route::group([
     Route::get('get-all-pagination', 'EscuelaUsuarioController@getPagination');
     Route::post('delete', 'EscuelaUsuarioController@delete');
     Route::get('get', 'EscuelaUsuarioController@get');
-
 });
 
 Route::group([
@@ -83,3 +101,32 @@ Route::group([
     Route::get('get-all-configuration', 'ConfiguracionController@getAllConfiguration');
 });
 
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'linea-asignatura',
+], function ($router) {
+    Route::post('store', 'LineMateriaController@store');
+    Route::get('get-all-pagination', 'LineMateriaController@getPagination');
+    Route::post('delete', 'LineMateriaController@delete');
+    Route::get('get', 'LineMateriaController@get');
+});
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'programa',
+], function ($router) {
+    Route::post('store', 'ProgramaController@store');
+    Route::get('get-all-pagination', 'ProgramaController@getPagination');
+    Route::post('delete', 'ProgramaController@delete');
+    Route::get('get', 'ProgramaController@get');
+});
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'plan',
+], function ($router) {
+    Route::post('store', 'PlanController@store');
+    Route::get('get-all-pagination', 'PlanController@getPagination');
+    Route::post('delete', 'PlanController@delete');
+    Route::get('get', 'PlanController@get');
+});

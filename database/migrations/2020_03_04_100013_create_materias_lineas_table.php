@@ -14,17 +14,20 @@ class CreateMateriasLineasTable extends Migration
     public function up()
     {
         Schema::create('materias_lineas', function (Blueprint $table) {
+
+            $table->primary(['id_materia_origen', 'id_materia']);
             $table->integer('id_materia_origen')->unsigned();
             $table->integer('id_materia')->unsigned()->nullable();
             $table->timestamps();
+            $table->unique(['id_materia_origen', 'id_materia']);
 
             $table->foreign('id_materia')
-                    ->references('id')
-                    ->on('materias');
+                ->references('id')
+                ->on('materias');
 
             $table->foreign('id_materia_origen')
-                    ->references('id')
-                    ->on('materias');
+                ->references('id')
+                ->on('materias');
         });
     }
 
