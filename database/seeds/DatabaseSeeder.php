@@ -20,6 +20,6 @@ class DatabaseSeeder extends Seeder
          $this->call(Planes::class);
          $this->call(UsuariosTableSeeder::class);
          $this->call(ConfiguracionSeeder::class);
-
+         $this->call(RolSeeder::class);
     }
 }

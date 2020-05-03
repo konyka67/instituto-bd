@@ -50,12 +50,12 @@ class EscuelaUsuarioController extends Controller
     {
 
         if (
-            !empty($request->escuela_usuario["escuela"]["id"])
-            && !empty($request->escuela_usuario["usuario"]["id"])
+            !empty($request->data["escuela"]["id"])
+            && !empty($request->data["usuario"]["id"])
         ) {
             $lista = [
-                "id_escuela" => $request->escuela_usuario["escuela"]["id"],
-                "id_usuario" => $request->escuela_usuario["usuario"]["id"]
+                "id_escuela" => $request->data["escuela"]["id"],
+                "id_usuario" => $request->data["usuario"]["id"]
             ];
 
             $validacion = $this->validaciones($lista);
@@ -64,16 +64,16 @@ class EscuelaUsuarioController extends Controller
             }
 
             $escuelaUsuario = new EscuelaUsuario();
-            $escuelaUsuario->id_escuela = $request->escuela_usuario["escuela"]["id"];
-            $escuelaUsuario->id_usuario = $request->escuela_usuario["usuario"]["id"];
+            $escuelaUsuario->id_escuela = $request->data["escuela"]["id"];
+            $escuelaUsuario->id_usuario = $request->data["usuario"]["id"];
             try {
                 $escuelaUsuario->save();
             } catch (Exception $e) {
                 return response()->json(['error' => 'El usuario ya se encuentra registrado en la escuela.'], 422);
             }
-            $escuelaUsuario->escuela = $request->escuela_usuario["escuela"];
-            $escuelaUsuario->usuario = $request->escuela_usuario["usuario"];
-            return response()->json(["success" => true, "escuela-usuario" => $escuelaUsuario]);
+            $escuelaUsuario->escuela = $request->data["escuela"];
+            $escuelaUsuario->usuario = $request->data["usuario"];
+            return response()->json(["success" => true, "data" => $escuelaUsuario]);
         }
         return response()->json(["success" => false]);
     }
@@ -90,11 +90,11 @@ class EscuelaUsuarioController extends Controller
     }
     public function getPagination(Request $request)
     {
-        if( !empty($request->buscar) && $request->buscar !== 'undefined'){
-            $usuariosPagination = Usuario::join(
-                "escuela_usuarios",
-                "usuarios.id",
-                "escuela_usuarios.id_usuario"
+        if (!empty($request->buscar) && $request->buscar !== 'undefined') {
+            $escuelaUsuario = EscuelaUsuario::join(
+                "usuarios",
+                "escuela_usuarios.id_usuario",
+                "usuarios.id"
             )->join(
                 "escuelas",
                 "escuela_usuarios.id_escuela",
@@ -103,24 +103,16 @@ class EscuelaUsuarioController extends Controller
                 ->where("usuarios.tipo", $request->tipo)
                 ->where("usuarios.nombre", "like", "%" . $request->buscar . "%")
                 ->orderBy('usuarios.id', 'asc')
-                ->select(
-                    'usuarios.*',
-                    'escuela_usuarios.id_escuela',
-                    'escuelas.nombre as nombre_e',
-                    'escuelas.id_sede',
-                    'escuelas.created_at as created_at_e',
-                    'escuelas.updated_at as updated_at_e',
-                    'escuela_usuarios.created_at as created_at_eu',
-                    'escuela_usuarios.updated_at as updated_at_eu'
-                )
+                ->select('escuela_usuarios.*')
+                ->with('usuario')
+                ->with('escuela')
                 ->paginate(5);
 
-            return response()->json(["success" => true, "escuela-usuario" => $usuariosPagination]);
         } else {
-            $usuariosPagination = Usuario::join(
-                "escuela_usuarios",
-                "usuarios.id",
-                "escuela_usuarios.id_usuario"
+            $escuelaUsuario = EscuelaUsuario::join(
+                "usuarios",
+                "escuela_usuarios.id_usuario",
+                "usuarios.id"
             )->join(
                 "escuelas",
                 "escuela_usuarios.id_escuela",
@@ -128,19 +120,12 @@ class EscuelaUsuarioController extends Controller
             )
                 ->where("usuarios.tipo", $request->tipo)
                 ->orderBy('usuarios.id', 'asc')
-                ->select(
-                    'usuarios.*',
-                    'escuela_usuarios.id_escuela',
-                    'escuelas.nombre as nombre_e',
-                    'escuelas.id_sede',
-                    'escuelas.created_at as created_at_e',
-                    'escuelas.updated_at as updated_at_e',
-                    'escuela_usuarios.created_at as created_at_eu',
-                    'escuela_usuarios.updated_at as updated_at_eu'
-                )->paginate(5);
-
-            return response()->json(["success" => true, "escuela-usuario" => $usuariosPagination]);
+                ->select('escuela_usuarios.*')
+                ->with('usuario')
+                ->with('escuela')
+                ->paginate(5);
         }
+        return response()->json(["success" => true, "data" => $escuelaUsuario]);
     }
     /**
      * Show the form for editing the specified resource.
@@ -177,8 +162,8 @@ class EscuelaUsuarioController extends Controller
     }
     public function delete(Request $request)
     {
-        foreach ($request["escuela-usuario"] as $escuela_usuario) {
-            EscuelaUsuario::where('id_escuela', $escuela_usuario["escuela"]["id"])->where('id_usuario', $escuela_usuario["usuario"]["id"])->delete();
+        foreach ($request["datas"] as $data) {
+            EscuelaUsuario::where('id_escuela', $data["escuela"]["id"])->where('id_usuario', $data["usuario"]["id"])->delete();
         }
         return response()->json(["success" => true]);
     }

@@ -15,7 +15,9 @@ class Departamentos extends Seeder
         DB::table('departamentos')->insert([
             "id"=>1,
             "nombre"=>"BOGOTÁ",
-            "id_pais"=>1
+            "id_pais"=>1,
+            "created_at" => new \DateTime(),
+            "updated_at" => new \DateTime(),
         ]);
     }
 }

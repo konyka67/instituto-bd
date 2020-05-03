@@ -62,15 +62,6 @@ Route::group([
     Route::get('get', 'SedeController@get');
 });
 
-Route::group([
-    'middleware' => 'api',
-    'prefix' => 'materia',
-], function ($router) {
-    Route::post('store', 'MateriaController@store');
-    Route::get('get-all-pagination', 'MateriaController@getPagination');
-    Route::post('delete', 'MateriaController@delete');
-    Route::get('get', 'MateriaController@get');
-});
 
 
 Route::group([
@@ -100,6 +91,17 @@ Route::group([
     Route::post('store', 'ConfiguracionController@store');
     Route::get('get-all-configuration', 'ConfiguracionController@getAllConfiguration');
 });
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'asignatura',
+], function ($router) {
+    Route::post('store', 'MateriaController@store');
+    Route::get('get-all-pagination', 'MateriaController@getPagination');
+    Route::post('delete', 'MateriaController@delete');
+    Route::get('get', 'MateriaController@get');
+});
+
 
 Route::group([
     'middleware' => 'api',

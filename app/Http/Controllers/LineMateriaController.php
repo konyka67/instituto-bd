@@ -7,6 +7,7 @@ use App\Materia;
 use App\MateriasLinea;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+
 class LineMateriaController extends Controller
 {
     /**
@@ -38,8 +39,8 @@ class LineMateriaController extends Controller
     public function store(Request $request)
     {
         $lista = [
-            "asignatura_origen" => $request->linea_asginatura["materia_origen"]["id"],
-            "asignatura" => $request->linea_asginatura["materia"]["id"]
+            "asignatura_origen" => $request->data["materiaOrigen"]["id"],
+            "asignatura" => $request->data["materia"]["id"]
         ];
 
         $validacion = $this->validaciones($lista);
@@ -48,80 +49,53 @@ class LineMateriaController extends Controller
         }
         $lineaMateria = new MateriasLinea();
 
-        $lineaMateria->id_materia_origen = $request->linea_asginatura["materia_origen"]["id"];
-        $lineaMateria->id_materia = $request->linea_asginatura["materia"]["id"];
+        $lineaMateria->id_materia_origen = $request->data["materiaOrigen"]["id"];
+        $lineaMateria->id_materia = $request->data["materia"]["id"];
 
         try {
             $lineaMateria->save();
         } catch (Exception $e) {
             return response()->json(['error' => 'La asignatura ya tiene una línea. Si el criterio es que debe registrarla, verficar en la linea de asignación por asignatura, en la opción eliminar ¡Gracias!.'], 422);
         }
-        $materia_origen = Materia::find($request->linea_asginatura["materia_origen"]["id"]);
-        $materia = Materia::find($request->linea_asginatura["materia"]["id"]);
-        $lineaMateria->materia_origen = $materia_origen;
+        $materiaOrigen = Materia::find($request->data["materiaOrigen"]["id"]);
+        $materia = Materia::find($request->data["materia"]["id"]);
+        $lineaMateria->materiaOrigen = $materiaOrigen;
         $lineaMateria->materia = $materia;
-        return response()->json(["success" => true, "linea-asignatura" => $lineaMateria]);
+        return response()->json(["success" => true, "data" => $lineaMateria]);
     }
 
 
     public function getPagination(Request $request)
     {
         if (!empty($request->buscar) && $request->buscar !== 'undefined') {
-            $lineaMaterias = Materia::join(
-                "materias_lineas",
-                "materias.id",
-                "materias_lineas.id_materia_origen"
-            )->join(
-                "materias as materias_m",
-                "materias_lineas.id_materia",
-                "materias_m.id"
-            )
-                ->where("materias.nombre", "like", "%" . $request->buscar . "%")
-                ->orderBy('materias.id', 'asc')
-                ->select(
-                    'materias_lineas.*',
-                    'materias.id as id_o',
-                    'materias.nombre as nombre_o',
-                    'materias.credito as credito_o',
-                    'materias.created_at as created_at_o',
-                    'materias.updated_at as updated_at_o',
-                    'materias_m.id as id_m',
-                    'materias_m.nombre as nombre_m',
-                    'materias_m.credito as credito_m',
-                    'materias_m.created_at as created_at_m',
-                    'materias_m.updated_at as updated_at_m',
-                )
-                ->paginate(5);
 
-            return response()->json(["success" => true, "linea-asignatura" => $lineaMaterias]);
+            $lineaMaterias = MateriasLinea::join('materias', 'materias_lineas.id_materia_origen', 'materias.id')
+                ->join(
+                    "materias as materias_m",
+                    "materias_lineas.id_materia",
+                    "materias_m.id"
+                )
+                ->where('materias.nombre', 'like', '%' . $request->buscar . '%')
+                ->select("materias_lineas.*")
+                ->orderBy('materias.id', 'asc')
+                ->with('materiaOrigen')
+                ->with('materia')
+                ->paginate(5);
         } else {
-            $lineaMaterias = Materia::join(
-                "materias_lineas",
-                "materias.id",
-                "materias_lineas.id_materia_origen"
-            )->join(
-                "materias as materias_m",
-                "materias_lineas.id_materia",
-                "materias_m.id"
-            )
-                ->orderBy('materias.id', 'asc')
-                ->select(
-                    'materias_lineas.*',
-                    'materias.id as id_o',
-                    'materias.nombre as nombre_o',
-                    'materias.credito as credito_o',
-                    'materias.created_at as created_at_o',
-                    'materias.updated_at as updated_at_o',
-                    'materias_m.id as id_m',
-                    'materias_m.nombre as nombre_m',
-                    'materias_m.credito as credito_m',
-                    'materias_m.created_at as created_at_m',
-                    'materias_m.updated_at as updated_at_m',
+            $lineaMaterias = MateriasLinea::join('materias', 'materias_lineas.id_materia_origen', 'materias.id')
+                ->join(
+                    "materias as materias_m",
+                    "materias_lineas.id_materia",
+                    "materias_m.id"
                 )
+                ->select("materias_lineas.*")
+                ->orderBy('materias.id', 'asc')
+                ->with('materiaOrigen')
+                ->with('materia')
                 ->paginate(5);
-
-            return response()->json(["success" => true, "linea-asignatura" => $lineaMaterias]);
         }
+
+        return response()->json(["success" => true, "data" => $lineaMaterias]);
     }
     /**
      * Display the specified resource.
@@ -170,8 +144,12 @@ class LineMateriaController extends Controller
 
     public function delete(Request $request)
     {
-        foreach ($request["linea-asignatura"] as $linea_asignatura) {
-            MateriasLinea::where('id_materia_origen', $linea_asignatura["materia_origen"]["id"])->where('id_materia', $linea_asignatura["materia"]["id"])->delete();
+        foreach ($request["datas"] as $data) {
+            try {
+                MateriasLinea::where('id_materiaOrigen', $data["materiaOrigen"]["id"])->where('id_materia', $data["materia"]["id"])->delete();
+            } catch (\Exception $e) {
+                return response()->json(['error' => 'Por favor eliminar los registros asignatura, en la jerarquia es el mas interno.'], 422);
+            }
         }
 
         return response()->json(["success" => true]);

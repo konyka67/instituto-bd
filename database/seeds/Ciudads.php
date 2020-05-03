@@ -15,7 +15,9 @@ class Ciudads extends Seeder
         DB::table('ciudads')->insert([
             "id"=>1,
             "nombre"=>"BOGOTÁ",
-            "id_departamento"=>1
+            "id_departamento"=>1,
+            "created_at" => new \DateTime(),
+            "updated_at" => new \DateTime(),
         ]);
     }
 }

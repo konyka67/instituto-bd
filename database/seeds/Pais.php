@@ -14,7 +14,9 @@ class Pais extends Seeder
     {
         DB::table('pais')->insert([
             "id"=>1,
-            "nombre"=>"COLOMBIA"
+            "nombre"=>"COLOMBIA",
+            "created_at" => new \DateTime(),
+            "updated_at" => new \DateTime(),
         ]);
     }
 }

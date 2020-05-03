@@ -17,7 +17,9 @@ class Localizacions extends Seeder
             "direccion"=> "DG. 4A #174A24",
             "latitud"=>4.5972098,
             "longitud"=>-74.0887461,
-            "id_ciudad"=>1
+            "id_ciudad"=>1,
+            "created_at" => new \DateTime(),
+            "updated_at" => new \DateTime(),
         ]);
     }
 }

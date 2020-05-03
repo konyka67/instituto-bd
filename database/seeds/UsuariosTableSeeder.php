@@ -26,6 +26,8 @@ class UsuariosTableSeeder extends Seeder
             'id_localizacion'=>1,
             'celular'=>3115907753,
             'password' => bcrypt('123'),
+             "created_at" => new \DateTime(),
+            "updated_at" => new \DateTime(),
         ]);
 
         DB::table('usuarios')->insert([
@@ -40,6 +42,8 @@ class UsuariosTableSeeder extends Seeder
             'sex'=>'F',
             'celular'=>3132657947,
             'password' => bcrypt('123'),
+            "created_at" => new \DateTime(),
+            "updated_at" => new \DateTime(),
         ]);
 
         DB::table('usuarios')->insert([
@@ -54,6 +58,8 @@ class UsuariosTableSeeder extends Seeder
             'sex'=>'M',
             'celular'=>3115208693,
             'password' => bcrypt('123'),
+            "created_at" => new \DateTime(),
+            "updated_at" => new \DateTime(),
         ]);
 
 

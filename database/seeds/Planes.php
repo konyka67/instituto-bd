@@ -14,17 +14,23 @@ class Planes extends Seeder
     {
         DB::table('planes')->insert([
             "id"=>1,
-            "nombre"=> "CUATRIMESTRAL"
+            "nombre"=> "CUATRIMESTRAL",
+            "created_at" => new \DateTime(),
+            "updated_at" => new \DateTime(),
         ]);
 
         DB::table('planes')->insert([
             "id"=>2,
-            "nombre"=> "SEMESTRAL"
+            "nombre"=> "SEMESTRAL",
+            "created_at" => new \DateTime(),
+            "updated_at" => new \DateTime(),
         ]);
 
         DB::table('planes')->insert([
             "id"=>3,
-            "nombre"=> "ANUAL"
+            "nombre"=> "ANUAL",
+            "created_at" => new \DateTime(),
+            "updated_at" => new \DateTime(),
         ]);
     }
 }

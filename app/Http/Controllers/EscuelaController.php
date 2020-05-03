@@ -53,17 +53,17 @@ class EscuelaController extends Controller
             return response()->json($validacion->errors(), 422);
         }
         $escuela = new Escuela();
-        if (!empty($request->escuela["id"])) {
-            $escuela = Escuela::find($request->escuela["id"]);
+        if (!empty($request->data["id"])) {
+            $escuela = Escuela::find($request->data["id"]);
         }
-        $escuela->nombre = $request->escuela["nombre"];
+        $escuela->nombre = $request->data["nombre"];
         //PARA BUSCAR O GURDAR LA LOCALIZACION
-        if (!empty($request->escuela["sede"])) {
-            $escuela->id_sede = $request->escuela["sede"]["id"];
+        if (!empty($request->data["sede"])) {
+            $escuela->id_sede = $request->data["sede"]["id"];
         }
         $escuela->save();
-        $escuela->sede = $request->escuela["sede"];
-        return response()->json(["success" => true, "escuela" => $escuela]);
+        $escuela->sede = $request->data["sede"];
+        return response()->json(["success" => true, "data" => $escuela]);
     }
 
     function validaciones(Request $request)
@@ -76,52 +76,45 @@ class EscuelaController extends Controller
             'required' => 'El campo :attribute es obligatorio'
         ];
 
-        $validator = Validator::make($request->escuela, $regla, $mensaje);
+        $validator = Validator::make($request->data, $regla, $mensaje);
         return  $validator;
     }
 
     public function getPagination(Request $request)
     {
 
-        if( !empty($request->buscar) && $request->buscar !== 'undefined'){
-            $escuelasPagination = Sede::join(
-                "escuelas",
-                "sedes.id",
-                "escuelas.id_sede"
+        if (!empty($request->buscar) && $request->buscar !== 'undefined') {
+            $escuelasPagination = Escuela::join(
+                "sedes",
+                "escuelas.id_sede",
+                "sedes.id"
             )
                 ->where("escuelas.nombre", "like", "%" . $request->buscar . "%")
                 ->orderBy('escuelas.id', 'asc')
                 ->select(
                     'escuelas.*',
-                    'sedes.nombre as nombre_s',
-                    'sedes.created_at as created_at_s',
-                    'sedes.updated_at as updated_at_s',
-                    'sedes.id_localizacion'
-                )
+                )->with('sede')
                 ->paginate(5);
         } else {
-            $escuelasPagination = Sede::join(
-                "escuelas",
-                "sedes.id",
-                "escuelas.id_sede"
+            $escuelasPagination = Escuela::join(
+                "sedes",
+                "escuelas.id_sede",
+                "sedes.id"
+
             )->orderBy('escuelas.id', 'asc')
                 ->select(
                     'escuelas.*',
-                    'sedes.nombre as nombre_s',
-                    'sedes.created_at as created_at_s',
-                    'sedes.updated_at as updated_at_s',
-                    'sedes.id_localizacion'
-                )
+                )->with('sede')
                 ->paginate(5);
         }
-        return response()->json(["escuela" => $escuelasPagination]);
+        return response()->json(["data" => $escuelasPagination]);
     }
 
     public function delete(Request $request)
     {
         $arraIn = array();
-        foreach ($request->escuelas as $escuela) {
-            array_push($arraIn, $escuela["id"]);
+        foreach ($request->datas as $data) {
+            array_push($arraIn, $data["id"]);
         }
         Escuela::whereIn('id', $arraIn)->delete();
         return response()->json(["success" => true]);
@@ -185,6 +178,6 @@ class EscuelaController extends Controller
             'sedes.id_localizacion'
         )->firts();
 
-        return response()->json(["success" => true, "escuela" => $escuela]);
+        return response()->json(["success" => true, "data" => $escuela]);
     }
 }

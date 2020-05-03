@@ -15,11 +15,15 @@ class ConfiguracionSeeder extends Seeder
         DB::table('configuraciones')->insert([
             "key"=>"titulo",
             "value"=>"Institución",
+            "created_at" => new \DateTime(),
+            "updated_at" => new \DateTime(),
         ]);
 
         DB::table('configuraciones')->insert([
             "key"=>"logo",
             "value"=>"default_logo.png",
+            "created_at" => new \DateTime(),
+            "updated_at" => new \DateTime(),
         ]);
     }
 }

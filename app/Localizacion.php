@@ -49,5 +49,13 @@ class Localizacion extends Model
         return $this;
     }
 
+    public function usuarios()    {
+        return $this->hasMany('App\Usuario','id_localizacion');
+    }
+
+
+    public function sedes()    {
+        return $this->hasMany(Sede::class,'id_localizacion');
+    }
 
 }

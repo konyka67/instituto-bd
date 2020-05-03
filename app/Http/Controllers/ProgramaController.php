@@ -37,29 +37,29 @@ class ProgramaController extends Controller
     {
         $programa = new Programa();
 
-        if(!empty($request["programa"]["id"])){
-            $programa= Programa::find($request["programa"]["id"]);
+        if(!empty($request["data"]["id"])){
+            $programa= Programa::find($request["data"]["id"]);
         }
 
-        $programa->nombre = $request["programa"]["nombre"];
+        $programa->nombre = $request["data"]["nombre"];
         $programa->save();
 
-        return response()->json(["success" => true, "programa" => $programa]);
+        return response()->json(["success" => true, "data" => $programa]);
     }
 
       public function getPagination(Request $request)
     {
         if( !empty($request->buscar) && $request->buscar !== 'undefined'){
-             return response()->json(["success" => true, "programa" => Programa::where("nombre", "like", "%" . $request->buscar . "%")->orderBy("id")->paginate(5)]);
+             return response()->json(["success" => true, "data" => Programa::where("nombre", "like", "%" . $request->buscar . "%")->orderBy("id")->paginate(5)]);
         }
-        return response()->json(["success" => true, "programa" => Programa::orderBy("id")->paginate(5)]);
+        return response()->json(["success" => true, "data" => Programa::orderBy("id")->paginate(5)]);
     }
 
     public function delete(Request $request)
     {
         $arraIn = array();
-        foreach ($request->programas as $programa) {
-            array_push($arraIn, $programa["id"]);
+        foreach ($request->datas as $data) {
+            array_push($arraIn, $data["id"]);
         }
         Programa::whereIn('id', $arraIn)->delete();
         return response()->json(["success" => true]);

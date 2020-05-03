@@ -50,11 +50,21 @@ class Usuario extends Authenticatable implements JWTSubject
     {
         return $this->getKey();
     }
+
     public function getJWTCustomClaims()
     {
         return [];
     }
+
     public function localizacion()    {
-        return $this->belongsTo('App\Localizacion');
+        return $this->belongsTo(Localizacion::class,'id_localizacion','id');
+    }
+
+    public function escuelas(){
+        return $this->belongsToMany(Escuela::class,'escuela_usuarios','id_usuario','id_escuela')->withTimestamps();
+    }
+
+    public function roles(){
+        return $this->belongsToMany(Role::class,'rol_usuarios','id_usuario','id_rol')->withTimestamps();
     }
 }

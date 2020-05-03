@@ -9,6 +9,7 @@ use App\Direccion;
 use App\Localizacion;
 use App\Email;
 use App\Pais;
+use App\Role;
 use App\Usuario;
 use Carbon\Carbon;
 use Illuminate\Foundation\Auth\User;
@@ -105,6 +106,9 @@ class UsuarioController extends Controller
         }
         $usuario->cedula = $user->cedula;
         $usuario->tipo = $user->tipo;
+
+
+
         $usuario->sex = $user->sex;
         $usuario->email = $user->email;
 
@@ -165,6 +169,7 @@ class UsuarioController extends Controller
             }
         }
         $usuario->save();
+        Role::where('tipo','=',$user->tipo)->first()->usuarios()->sync($usuario->id);
         //cuando el id existe es porque esta actualizando los datos de la persona
         if (empty($id)) {
             $email = new Email();

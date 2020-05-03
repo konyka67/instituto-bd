@@ -55,13 +55,13 @@ class SedeController extends Controller
             return response()->json($validacion->errors(), 422);
         }
         $sede = new Sede();
-        if (!empty($request->sede["id"])) {
-            $sede = Sede::find($request->sede["id"]);
+        if (!empty($request->data["id"])) {
+            $sede = Sede::find($request->data["id"]);
         }
-        $sede->nombre = $request->sede["nombre"];
+        $sede->nombre = $request->data["nombre"];
         //PARA BUSCAR O GURDAR LA LOCALIZACION
-        if (!empty($request->sede["localizacion"])) {
-            $direccion = new Direccion($request->sede["localizacion"]["direccion"]);
+        if (!empty($request->data["localizacion"])) {
+            $direccion = new Direccion($request->data["localizacion"]["direccion"]);
             $direccion->ejecutar();
             if (!$direccion->isEmpty()) {
                 $pais = new Pais();
@@ -71,71 +71,50 @@ class SedeController extends Controller
                 $departamento = $departamento->buscar($direccion->getDepartamento(), $pais);
                 $ciudad = $ciudad->buscar($direccion->getCiudad(), $departamento);
                 $localizacionTable = new Localizacion();
-                $localizacionTable = $localizacionTable->buscar($request->sede["localizacion"]["latitud"], $request->sede["localizacion"]["longitud"], $direccion->getDireccion(), $ciudad);
+                $localizacionTable = $localizacionTable->buscar($request->data["localizacion"]["latitud"], $request->data["localizacion"]["longitud"], $direccion->getDireccion(), $ciudad);
                 $sede->id_localizacion = $localizacionTable->id;
                 $sede->save();
                 $sede->localizacion = $localizacionTable;
-                return response()->json(["success" => true, "sede" => $sede]);
+                return response()->json(["success" => true, "data" => $sede]);
             }
         }
-        return response()->json(["success" => false, "sede" => $sede]);
+        return response()->json(["success" => false, "data" => $sede]);
     }
 
     public function getPagination(Request $request)
     {
 
-        if( !empty($request->buscar) && $request->buscar !== 'undefined'){
-            $sedesPagination = Localizacion::join(
-                "sedes",
-                "localizacions.id",
-                "sedes.id_localizacion"
-            )->where("nombre", "like", "%" . $request->buscar . "%")
+        if (!empty($request->buscar) && $request->buscar !== 'undefined') {
+            $sedesPagination = Sede::join(
+                "localizacions",
+                "sedes.id_localizacion",
+                "localizacions.id"
+            )
+                ->where("sedes.nombre", "like", "%" . $request->buscar . "%")
                 ->orderBy('sedes.id', 'asc')
-                ->select(
-                    'sedes.id',
-                    'sedes.nombre',
-                    'sedes.created_at',
-                    'sedes.updated_at',
-                    'sedes.id_localizacion',
-                    'localizacions.direccion',
-                    'localizacions.latitud',
-                    'localizacions.longitud',
-                    'localizacions.id_ciudad',
-                    'localizacions.created_at as created_at_l',
-                    'localizacions.updated_at as updated_at_l'
-                )
+                ->select('sedes.*')
+                ->with('localizacion')
                 ->paginate(5);
         } else {
-            $sedesPagination = Localizacion::join(
-                "sedes",
-                "localizacions.id",
-                "sedes.id_localizacion"
+            $sedesPagination = Sede::join(
+                "localizacions",
+                "sedes.id_localizacion",
+                "localizacions.id"
             )
                 ->orderBy('sedes.id', 'asc')
-                ->select(
-                    'sedes.id',
-                    'sedes.nombre',
-                    'sedes.created_at',
-                    'sedes.updated_at',
-                    'sedes.id_localizacion',
-                    'localizacions.direccion',
-                    'localizacions.latitud',
-                    'localizacions.longitud',
-                    'localizacions.id_ciudad',
-                    'localizacions.created_at as created_at_l',
-                    'localizacions.updated_at as updated_at_l'
-                )
+                ->select('sedes.*')
+                ->with('localizacion')
                 ->paginate(5);
         }
-        return response()->json(["sede" => $sedesPagination]);
+        return response()->json(["data" => $sedesPagination]);
     }
 
 
     public function delete(Request $request)
     {
         $arraIn = array();
-        foreach ($request->sedes as $sede) {
-            array_push($arraIn, $sede["id"]);
+        foreach ($request->datas as $data) {
+            array_push($arraIn, $data["id"]);
         }
         Sede::whereIn('id', $arraIn)->delete();
         return response()->json(["success" => true]);
@@ -202,7 +181,7 @@ class SedeController extends Controller
             'required' => 'El campo :attribute es obligatorio'
         ];
 
-        $validator = Validator::make($request->sede, $regla, $mensaje);
+        $validator = Validator::make($request->data, $regla, $mensaje);
         return  $validator;
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Localizacion;
 use App\Role;
+use App\RolUsuario;
 use App\Usuario;
 
 class AuthController extends Controller
@@ -28,9 +29,10 @@ class AuthController extends Controller
     {
         $credentials = request(['email', 'password']);
 
-        if (! $token = auth()->attempt($credentials)) {
+        if (!$token = auth()->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
+
         return $this->respondWithToken($token);
     }
 
@@ -41,9 +43,9 @@ class AuthController extends Controller
      */
     public function me()
     {
-        $usuario=Usuario::find(auth()->user()->id);
-        $localizacion=Localizacion::find($usuario->id_localizacion);
-        $usuario->localizacion=$localizacion;
+        $usuario = Usuario::find(auth()->user()->id);
+        $localizacion = Localizacion::find($usuario->id_localizacion);
+        $usuario->localizacion = $localizacion;
         return response()->json($usuario);
     }
 
@@ -58,7 +60,7 @@ class AuthController extends Controller
     {
         auth()->logout();
 
-        return response()->json(['data'=>true,'mensaje' => 'Cierre de sesión exitoso']);
+        return response()->json(['data' => true, 'mensaje' => 'Cierre de sesión exitoso']);
     }
 
     /**
@@ -72,26 +74,28 @@ class AuthController extends Controller
     }
 
     /**
-     * Get the token array structure.
-     *
-     * @param  string $token
+     * Get the token array struc$rol->tipo
      *
      * @return \Illuminate\Http\JsonResponse
      */
     protected function respondWithToken($token)
     {
-        $usuario=Usuario::find(auth()->user()->id);
-        $localizacion=Localizacion::find($usuario->id_localizacion);
-        $usuario->localizacion=$localizacion;
-        $usuario->token=$token;
+
+        $usuario = Usuario::find(auth()->user()->id)->with('roles')->with('localizacion')->first();
+        foreach ($usuario->roles as $rol) {
+            if(!empty($rol->tipo) && $rol->tipo === app('request')->__get('tipo')){
+                $rolNuevo = $rol;
+                break;
+            }
+        }
+        $usuario->rol = $rolNuevo;
+        $usuario->token = $token;
 
         return response()->json([
             'access_token' => $token,
-            'usuario'=>$usuario,
+            'usuario' => $usuario,
             'token_type' => 'bearer',
             'expires_in' => auth('api')->factory()->getTTL() * 60
         ]);
     }
-
-
 }
