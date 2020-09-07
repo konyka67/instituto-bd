@@ -117,6 +117,7 @@ class SedeController extends Controller
             array_push($arraIn, $data["id"]);
         }
         Sede::whereIn('id', $arraIn)->delete();
+        $this->refreshDB('sedes');
         return response()->json(["success" => true]);
     }
 

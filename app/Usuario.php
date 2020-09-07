@@ -67,4 +67,16 @@ class Usuario extends Authenticatable implements JWTSubject
     public function roles(){
         return $this->belongsToMany(Role::class,'rol_usuarios','id_usuario','id_rol')->withTimestamps();
     }
+
+    public static function boot() {
+        parent::boot();
+
+        static::deleting(function($yegua) {
+             $yegua->roles()->delete();
+        });
+    }
+
+    public function programaciones(){
+        return $this->belongsToMany(ProgramacionHorario::class,'inscripcion_asig_es','id_estudiante','id_programacion')->withTimestamps();
+    }
 }

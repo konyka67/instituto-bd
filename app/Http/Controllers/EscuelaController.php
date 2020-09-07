@@ -62,8 +62,8 @@ class EscuelaController extends Controller
             $escuela->id_sede = $request->data["sede"]["id"];
         }
         $escuela->save();
-        $escuela->sede = $request->data["sede"];
-        return response()->json(["success" => true, "data" => $escuela]);
+        // $escuela->sede = $request->data["sede"];
+        return response()->json(["success" => true, "data" => $escuela->with('sede')->first()]);
     }
 
     function validaciones(Request $request)
@@ -117,6 +117,7 @@ class EscuelaController extends Controller
             array_push($arraIn, $data["id"]);
         }
         Escuela::whereIn('id', $arraIn)->delete();
+        $this->refreshDB('escuelas');
         return response()->json(["success" => true]);
     }
     /**

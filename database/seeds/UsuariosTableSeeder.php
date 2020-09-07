@@ -14,6 +14,60 @@ class UsuariosTableSeeder extends Seeder
     public function run()
     {
         DB::table('usuarios')->insert([
+            'nombre'=>'Carol Tatiana Rodriguez Becerra',
+            'nombre_uno' =>'Carol',
+            'nombre_dos' => 'Tatiana',
+            'apellido_uno' => 'Rodriguez',
+            'apellido_dos' => 'Becerra',
+            'email' => 'tatiana@gmail.com',
+            'tipo'=>'PR',
+            'cedula'=>'1282353929',
+            'sex'=>'F',
+            'id_localizacion'=>1,
+            'celular'=>3115907753,
+            // 'id_rol'=> 2 ,
+            'password' => bcrypt('123'),
+             "created_at" => new \DateTime(),
+            "updated_at" => new \DateTime(),
+        ]);
+
+        DB::table('usuarios')->insert([
+            'nombre'=>'Candida Rosa Tamayo',
+            'nombre_uno' =>'candida',
+            'nombre_dos' => 'rosa',
+            'apellido_uno' => 'tamayo',
+            'apellido_dos' => '',
+            'email' => 'rosa@gmail.com',
+            'tipo'=>'ES',
+            'cedula'=>'1022353929',
+            'sex'=>'F',
+            'id_localizacion'=>1,
+            'celular'=>3115907753,
+            // 'id_rol'=> 3 ,
+            'password' => bcrypt('123'),
+             "created_at" => new \DateTime(),
+            "updated_at" => new \DateTime(),
+        ]);
+
+        DB::table('usuarios')->insert([
+            'nombre'=>'Nancy Jhoanna Becerra Tamayo',
+            'nombre_uno' =>'Nancy',
+            'nombre_dos' => 'Jhoanna',
+            'apellido_uno' => 'Becerra',
+            'apellido_dos' => 'Tamayo',
+            'email' => 'nancy@gmail.com',
+            'tipo'=>'ES',
+            'cedula'=>'1122353929',
+            'sex'=>'F',
+            'id_localizacion'=>1,
+            'celular'=>3115907753,
+            // 'id_rol'=> 3 ,
+            'password' => bcrypt('123'),
+             "created_at" => new \DateTime(),
+            "updated_at" => new \DateTime(),
+        ]);
+
+        DB::table('usuarios')->insert([
             'nombre'=>'juan camilo rodriguez diaz',
             'nombre_uno' =>'juan',
             'nombre_dos' => 'camilo',
@@ -25,6 +79,7 @@ class UsuariosTableSeeder extends Seeder
             'sex'=>'M',
             'id_localizacion'=>1,
             'celular'=>3115907753,
+
             'password' => bcrypt('123'),
              "created_at" => new \DateTime(),
             "updated_at" => new \DateTime(),

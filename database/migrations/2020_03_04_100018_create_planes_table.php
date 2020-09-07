@@ -17,6 +17,7 @@ class CreatePlanesTable extends Migration
             $table->increments('id');
             $table->string("nombre");//semestral, cuatrimestral,anual
             $table->timestamps();
+
         });
     }
 

@@ -14,4 +14,8 @@ class EscuelaUsuario extends Model
     public function usuario(){
         return $this->belongsTo(Usuario::class,'id_usuario','id');
     }
+
+    public function programa(){
+        return $this->belongsTo(Programa::class,'id_programa','id');
+    }
 }

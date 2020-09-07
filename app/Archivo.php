@@ -61,6 +61,18 @@ class Archivo
         );
     }
 
+    /**
+     * metodo que guarda el archivo en la ruta especifica
+     */
+    public function guardarArchivoNoticia($ruta)
+    {
+
+        Storage::disk("local")->put(
+            $ruta.$this->file->getClientOriginalName(),
+            File::get($this->file)
+        );
+    }
+
     public function getArchivoNombreExtension()
     {
         return $this->file->getClientOriginalName();

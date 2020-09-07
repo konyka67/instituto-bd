@@ -42,17 +42,19 @@ class ProgramaController extends Controller
         }
 
         $programa->nombre = $request["data"]["nombre"];
+        $programa->id_nivel = $request["data"]["nivelAcademico"]["id"];
         $programa->save();
-
+        $programa = Programa::with('nivelAcademico')->find($programa->id);
         return response()->json(["success" => true, "data" => $programa]);
     }
 
       public function getPagination(Request $request)
     {
         if( !empty($request->buscar) && $request->buscar !== 'undefined'){
-             return response()->json(["success" => true, "data" => Programa::where("nombre", "like", "%" . $request->buscar . "%")->orderBy("id")->paginate(5)]);
+             return response()->json(["success" => true, "data" =>
+             Programa::with('nivelAcademico')->where("nombre", "like", "%" . $request->buscar . "%")->orderBy("id")->paginate(5)]);
         }
-        return response()->json(["success" => true, "data" => Programa::orderBy("id")->paginate(5)]);
+        return response()->json(["success" => true, "data" => Programa::with('nivelAcademico')->orderBy("id")->paginate(5)]);
     }
 
     public function delete(Request $request)
@@ -62,6 +64,7 @@ class ProgramaController extends Controller
             array_push($arraIn, $data["id"]);
         }
         Programa::whereIn('id', $arraIn)->delete();
+        $this->refreshDB('programas');
         return response()->json(["success" => true]);
     }
     /**

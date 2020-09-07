@@ -18,14 +18,13 @@ class CreateGruposTable extends Migration
             $table->integer('id_escuela')->unsigned();
             $table->integer('id_materia')->unsigned();
             $table->integer('id_profesor')->unsigned();
-            $table->integer('numero');
+            $table->integer('numero');//CANTIDAD DE ESTUDIANTES
             $table->timestamps();
-            
+
             $table->foreign('id_materia')
                    ->references('id')
                    ->on('materias');
 
-            
             $table->foreign('id_escuela')
                   ->references('id')
                   ->on('escuelas');

@@ -39,7 +39,7 @@ class LineMateriaController extends Controller
     public function store(Request $request)
     {
         $lista = [
-            "asignatura_origen" => $request->data["materiaOrigen"]["id"],
+            "asignatura_origen" => $request->data["materia_origen"]["id"],
             "asignatura" => $request->data["materia"]["id"]
         ];
 
@@ -49,7 +49,7 @@ class LineMateriaController extends Controller
         }
         $lineaMateria = new MateriasLinea();
 
-        $lineaMateria->id_materia_origen = $request->data["materiaOrigen"]["id"];
+        $lineaMateria->id_materia_origen = $request->data["materia_origen"]["id"];
         $lineaMateria->id_materia = $request->data["materia"]["id"];
 
         try {
@@ -57,11 +57,11 @@ class LineMateriaController extends Controller
         } catch (Exception $e) {
             return response()->json(['error' => 'La asignatura ya tiene una línea. Si el criterio es que debe registrarla, verficar en la linea de asignación por asignatura, en la opción eliminar ¡Gracias!.'], 422);
         }
-        $materiaOrigen = Materia::find($request->data["materiaOrigen"]["id"]);
-        $materia = Materia::find($request->data["materia"]["id"]);
-        $lineaMateria->materiaOrigen = $materiaOrigen;
-        $lineaMateria->materia = $materia;
-        return response()->json(["success" => true, "data" => $lineaMateria]);
+        // $materiaOrigen = Materia::find($request->data["materiaOrigen"]["id"]);
+        // $materia = Materia::find($request->data["materia"]["id"]);
+        // $lineaMateria->materiaOrigen = $materiaOrigen;
+        // $lineaMateria->materia = $materia;
+        return response()->json(["success" => true, "data" => $lineaMateria->with('materia')->with('materiaOrigen')->first()]);
     }
 
 
@@ -146,12 +146,11 @@ class LineMateriaController extends Controller
     {
         foreach ($request["datas"] as $data) {
             try {
-                MateriasLinea::where('id_materiaOrigen', $data["materiaOrigen"]["id"])->where('id_materia', $data["materia"]["id"])->delete();
+                MateriasLinea::where('id_materiaOrigen', $data["materia_rigen"]["id"])->where('id_materia', $data["materia"]["id"])->delete();
             } catch (\Exception $e) {
                 return response()->json(['error' => 'Por favor eliminar los registros asignatura, en la jerarquia es el mas interno.'], 422);
             }
         }
-
         return response()->json(["success" => true]);
     }
 

@@ -55,7 +55,8 @@ class EscuelaUsuarioController extends Controller
         ) {
             $lista = [
                 "id_escuela" => $request->data["escuela"]["id"],
-                "id_usuario" => $request->data["usuario"]["id"]
+                "id_usuario" => $request->data["usuario"]["id"],
+                "id_programa" => $request->data["programa"]["id"]
             ];
 
             $validacion = $this->validaciones($lista);
@@ -66,6 +67,9 @@ class EscuelaUsuarioController extends Controller
             $escuelaUsuario = new EscuelaUsuario();
             $escuelaUsuario->id_escuela = $request->data["escuela"]["id"];
             $escuelaUsuario->id_usuario = $request->data["usuario"]["id"];
+            $escuelaUsuario->id_programa = $request->data["programa"]["id"];
+            $escuelaUsuario->anio_vigencia_inicial = $request->data["anio_vigencia_inicial"];
+            $escuelaUsuario->anio_vigencia_final = $request->data["anio_vigencia_final"];
             try {
                 $escuelaUsuario->save();
             } catch (Exception $e) {
@@ -73,6 +77,8 @@ class EscuelaUsuarioController extends Controller
             }
             $escuelaUsuario->escuela = $request->data["escuela"];
             $escuelaUsuario->usuario = $request->data["usuario"];
+            $escuelaUsuario->programa = $request->data["programa"];
+
             return response()->json(["success" => true, "data" => $escuelaUsuario]);
         }
         return response()->json(["success" => false]);
@@ -91,39 +97,30 @@ class EscuelaUsuarioController extends Controller
     public function getPagination(Request $request)
     {
         if (!empty($request->buscar) && $request->buscar !== 'undefined') {
-            $escuelaUsuario = EscuelaUsuario::join(
+
+
+        $escuelaUsuario = EscuelaUsuario::with('programa')->with('escuela')->with('usuario')
+            ->whereHas('usuario', function ($query) use ($request) {
+                $query->where('nombre', 'like', "%" . $request->buscar . "%")
+                ->where("tipo", $request->tipo);
+            })
+            ->join(
                 "usuarios",
                 "escuela_usuarios.id_usuario",
-                "usuarios.id"
-            )->join(
-                "escuelas",
-                "escuela_usuarios.id_escuela",
-                "escuelas.id"
-            )
-                ->where("usuarios.tipo", $request->tipo)
-                ->where("usuarios.nombre", "like", "%" . $request->buscar . "%")
-                ->orderBy('usuarios.id', 'asc')
-                ->select('escuela_usuarios.*')
-                ->with('usuario')
-                ->with('escuela')
-                ->paginate(5);
+                "usuarios.id")
+            ->select('escuela_usuarios.*')
+            ->orderBy('usuarios.id', 'asc')
+            ->paginate(5);
 
         } else {
-            $escuelaUsuario = EscuelaUsuario::join(
+            $escuelaUsuario = EscuelaUsuario::with('programa')->with('escuela')->with('usuario')
+            ->join(
                 "usuarios",
                 "escuela_usuarios.id_usuario",
-                "usuarios.id"
-            )->join(
-                "escuelas",
-                "escuela_usuarios.id_escuela",
-                "escuelas.id"
-            )
-                ->where("usuarios.tipo", $request->tipo)
-                ->orderBy('usuarios.id', 'asc')
-                ->select('escuela_usuarios.*')
-                ->with('usuario')
-                ->with('escuela')
-                ->paginate(5);
+                "usuarios.id")
+            ->select('escuela_usuarios.*')
+            ->orderBy('usuarios.id', 'asc')
+            ->paginate(5);
         }
         return response()->json(["success" => true, "data" => $escuelaUsuario]);
     }
@@ -163,7 +160,10 @@ class EscuelaUsuarioController extends Controller
     public function delete(Request $request)
     {
         foreach ($request["datas"] as $data) {
-            EscuelaUsuario::where('id_escuela', $data["escuela"]["id"])->where('id_usuario', $data["usuario"]["id"])->delete();
+            EscuelaUsuario::where('id_escuela', $data["escuela"]["id"])
+            ->where('id_usuario', $data["usuario"]["id"])
+            ->where('id_programa', $data["programa"]["id"])
+            ->delete();
         }
         return response()->json(["success" => true]);
     }
@@ -172,7 +172,8 @@ class EscuelaUsuarioController extends Controller
     {
         $regla   = [
             'id_escuela'    => 'required',
-            'id_usuario'    => 'required'
+            'id_usuario'    => 'required',
+            'id_programa'    => 'required'
         ];
         $mensaje = [
             'required' => 'El campo :attribute es obligatorio',

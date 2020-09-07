@@ -80,8 +80,9 @@ class AuthController extends Controller
      */
     protected function respondWithToken($token)
     {
-
-        $usuario = Usuario::find(auth()->user()->id)->with('roles')->with('localizacion')->first();
+        // return auth()->user();
+        $usuario = Usuario::with('roles')->with('localizacion')->where('id',auth()->user()->id)->first();
+        // return $usuario;
         foreach ($usuario->roles as $rol) {
             if(!empty($rol->tipo) && $rol->tipo === app('request')->__get('tipo')){
                 $rolNuevo = $rol;

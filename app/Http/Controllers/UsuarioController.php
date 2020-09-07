@@ -10,6 +10,7 @@ use App\Localizacion;
 use App\Email;
 use App\Pais;
 use App\Role;
+use App\RolUsuario;
 use App\Usuario;
 use Carbon\Carbon;
 use Illuminate\Foundation\Auth\User;
@@ -101,7 +102,6 @@ class UsuarioController extends Controller
                 $localizacionTable = new Localizacion();
                 $localizacionTable = $localizacionTable->buscar($localizacion->latitud, $localizacion->longitud, $direccion->getDireccion(), $ciudad);
                 $usuario->id_localizacion = $localizacionTable->id;
-
             }
         }
         $usuario->cedula = $user->cedula;
@@ -169,17 +169,17 @@ class UsuarioController extends Controller
             }
         }
         $usuario->save();
-        Role::where('tipo','=',$user->tipo)->first()->usuarios()->sync($usuario->id);
+        Role::where('tipo', '=', $user->tipo)->first()->usuarios()->sync($usuario->id);
         //cuando el id existe es porque esta actualizando los datos de la persona
         if (empty($id)) {
             $email = new Email();
             $email->send("Institución educativa", $usuario->email, ["usuario" => $usuario, "password" => $generadorPassword]);
         }
         if (!empty($user->token)) {
-            $usuario->token=$user->token;
+            $usuario->token = $user->token;
         }
         $usuario->localizacion = $localizacionTable;
-        return response()->json(["success" => true,"usuario"=>$usuario]);
+        return response()->json(["success" => true, "usuario" => $usuario]);
     }
 
     /**
@@ -275,58 +275,37 @@ class UsuarioController extends Controller
 
     public function allUsersTipo(Request $request)
     {
-        if( !empty($request->buscar) && $request->buscar !== 'undefined'){
-            $usuariosPagination = Localizacion::join(
-                "usuarios",
-                "localizacions.id",
-                "usuarios.id_localizacion"
-            )
-                ->where("usuarios.tipo", $request->tipo)
+        if (!empty($request->buscar) && $request->buscar !== 'undefined') {
+
+            $usuariosPagination = Usuario::with('localizacion')->with('roles')
+                ->whereHas('roles', function ($query) use ($request) {
+                    $query->where('tipo', $request->tipo);
+                })
                 ->where("usuarios.nombre", "like", "%" . $request->buscar . "%")
-                ->orderBy('usuarios.id', 'asc')
-                ->select(
-                    'usuarios.*',
-                    'localizacions.direccion',
-                    'localizacions.latitud',
-                    'localizacions.longitud',
-                    'localizacions.id_ciudad',
-                    'localizacions.created_at as created_at_l',
-                    'localizacions.updated_at as updated_at_l'
-                )
-                ->paginate(5);
-
-            return response()->json(["success" => true, "usuario" => $usuariosPagination]);
+                ->select('usuarios.*')->orderBy("usuarios.id")->paginate(5);
         } else {
-            $usuariosPagination = Localizacion::join(
-                "usuarios",
-                "localizacions.id",
-                "usuarios.id_localizacion"
-            )
-                ->where("usuarios.tipo", $request->tipo)
-                ->orderBy('usuarios.id', 'asc')
-                ->select(
-                    'usuarios.*',
-                    'localizacions.direccion',
-                    'localizacions.latitud',
-                    'localizacions.longitud',
-                    'localizacions.id_ciudad',
-                    'localizacions.created_at as created_at_l',
-                    'localizacions.updated_at as updated_at_l'
-                )
-                ->paginate(5);
-
-            return response()->json(["success" => true, "usuario" => $usuariosPagination]);
+            $usuariosPagination = Usuario::with('localizacion')->with('roles')
+                ->whereHas('roles', function ($query) use ($request) {
+                    $query->where('tipo', $request->tipo);
+                })->select('usuarios.*')->orderBy("usuarios.id")->paginate(5);
         }
+
+        return response()->json(["success" => true, "data" => $usuariosPagination]);
     }
 
     public function deleteUsers(Request $request)
-    {
-        foreach ($request->usuarios as $usuario) {
-            $usuario = Usuario::find($usuario["id"]);
-            $usuario->delete();
+    {   $arraIn = array();
+        foreach ($request->datas as $data) {
+            array_push($arraIn, $data["id"]);
+            $eliminar = Usuario::find($data["id"]);
+            $eliminar -> roles()->detach();
+            $eliminar -> delete();
         }
-        return $this->allUsersTipo($request);
+        $this->refreshDB('usuarios');
+
+        return response()->json(["success" => true]);
     }
+
 
     public function getUser(Request $request)
     {
@@ -335,5 +314,6 @@ class UsuarioController extends Controller
         $usuario->localizacion = $localizacion;
         return response()->json(["success" => true, "usuario" => $usuario]);
     }
+
 
 }

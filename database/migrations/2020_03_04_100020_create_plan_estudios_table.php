@@ -14,10 +14,10 @@ class CreatePlanEstudiosTable extends Migration
     public function up()
     {
         Schema::create('plan_estudios', function (Blueprint $table) {
-            $table->primary(['id_programa', 'id_materia','id_plan']);
+            $table->primary(['id_programa', 'id_materia','id_plan','periodo']);
             $table->integer('id_programa')->unsigned();
             $table->integer('id_materia')->unsigned();
-            $table->integer('id_area')->unsigned();
+            $table->integer('id_area')->unsigned()->nullable();
             $table->integer('id_plan')->unsigned();
             $table->tinyInteger('periodo')->unsigned();
             $table->integer('fecha_inicial')->unsigned();
@@ -32,7 +32,6 @@ class CreatePlanEstudiosTable extends Migration
             $table->foreign('id_programa')
                 ->references('id')
                 ->on('programas');
-
             $table->foreign('id_plan')
                 ->references('id')
                 ->on('planes');

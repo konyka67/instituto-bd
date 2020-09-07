@@ -62,6 +62,7 @@ class PlanController extends Controller
             array_push($arraIn, $data["id"]);
         }
         Plane::whereIn('id', $arraIn)->delete();
+        $this->refreshDB('planes');
         return response()->json(["success" => true]);
     }
 

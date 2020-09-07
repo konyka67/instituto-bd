@@ -16,6 +16,7 @@ class CreateProgramasTable extends Migration
         Schema::create('programas', function (Blueprint $table) {
             $table->increments('id');
             $table->string('nombre');
+            $table->integer('id_nivel')->unsigned();
             $table->mediumText('mision')->nullable();
             $table->mediumText('vision')->nullable();
             $table->text('justificacion')->nullable();
@@ -25,6 +26,10 @@ class CreateProgramasTable extends Migration
             $table->text('caracteristicas')->nullable();
             $table->text('propositos')->nullable();
             $table->timestamps();
+            $table->foreign('id_nivel')
+                ->references('id')
+                ->on('nivel_academicos')
+                ->onDelete('cascade');
         });
     }
 

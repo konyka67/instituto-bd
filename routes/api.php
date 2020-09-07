@@ -21,7 +21,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::middleware('auth:api')->get('/escuelas', function () {
     $esceulas = Escuela::all()->paginate(5);
-    return response()->json(["escuelas"=>$esceulas]);
+    return response()->json(["escuelas" => $esceulas]);
 });
 
 
@@ -43,9 +43,10 @@ Route::group([
     Route::post('refresh', 'AuthController@refresh');
     Route::post('me', 'AuthController@me');
     Route::post('store', 'UsuarioController@store');
-    Route::post('delete-users', 'UsuarioController@deleteUsers');
-    Route::get('all-users-tipo', 'UsuarioController@allUsersTipo');
+    Route::post('delete', 'UsuarioController@deleteUsers');
+    Route::get('get-all-pagination', 'UsuarioController@allUsersTipo');
     Route::get('get-user', 'UsuarioController@getUser');
+
 });
 
 // Route::get('v1/users','UsuarioController@getDian');
@@ -74,6 +75,18 @@ Route::group([
     Route::get('get', 'EscuelaController@get');
 });
 
+
+
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'escuela-programa',
+], function ($router) {
+    Route::post('store', 'EscuelaProgramaController@store');
+    Route::get('get-all-pagination', 'EscuelaProgramaController@getPagination');
+    Route::post('delete', 'EscuelaProgramaController@delete');
+    Route::get('get', 'EscuelaProgramaController@get');
+});
 Route::group([
     'middleware' => 'api',
     'prefix' => 'escuela-usuario',
@@ -115,12 +128,42 @@ Route::group([
 
 Route::group([
     'middleware' => 'api',
+    'prefix' => 'modalidad',
+], function ($router) {
+    Route::post('store', 'ModalidadController@store');
+    Route::get('get-all-pagination', 'ModalidadController@getPagination');
+    Route::post('delete', 'ModalidadController@delete');
+    Route::get('get', 'ModalidadController@get');
+});
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'nivel-educativo',
+], function ($router) {
+    Route::post('store', 'NivelAcademicoController@store');
+    Route::get('get-all-pagination', 'NivelAcademicoController@getPagination');
+    Route::post('delete', 'NivelAcademicoController@delete');
+    Route::get('get', 'NivelAcademicoController@get');
+});
+
+Route::group([
+    'middleware' => 'api',
     'prefix' => 'programa',
 ], function ($router) {
     Route::post('store', 'ProgramaController@store');
     Route::get('get-all-pagination', 'ProgramaController@getPagination');
     Route::post('delete', 'ProgramaController@delete');
     Route::get('get', 'ProgramaController@get');
+});
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'programa-modalidad',
+], function ($router) {
+    Route::post('store', 'ProgramaModalidadController@store');
+    Route::get('get-all-pagination', 'ProgramaModalidadController@getPagination');
+    Route::post('delete', 'ProgramaModalidadController@delete');
+    Route::get('get', 'ProgramaModalidadController@get');
 });
 
 Route::group([
@@ -132,3 +175,80 @@ Route::group([
     Route::post('delete', 'PlanController@delete');
     Route::get('get', 'PlanController@get');
 });
+
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'plan-estudio',
+], function ($router) {
+    Route::post('store', 'PlanEstudioController@store');
+    Route::get('get-all-pagination', 'PlanEstudioController@getPagination');
+    Route::post('delete', 'PlanEstudioController@delete');
+    Route::get('get', 'PlanEstudioController@get');
+});
+
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'noticia',
+], function ($router) {
+    Route::post('store', 'NoticiaController@store');
+    Route::get('get-all-pagination', 'NoticiaController@getPagination');
+    Route::post('delete', 'NoticiaController@delete');
+    Route::get('get', 'NoticiaController@get');
+});
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'salon',
+], function ($router) {
+    Route::post('store', 'SalonController@store');
+    Route::get('get-all-pagination', 'SalonController@getPagination');
+    Route::post('delete', 'SalonController@delete');
+    Route::get('get', 'SalonController@get');
+});
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'asig-profe-asigs',
+], function ($router) {
+    Route::post('store', 'AsigPrfeAsigsController@store');
+    Route::get('get-all-pagination', 'AsigPrfeAsigsController@getPagination');
+    Route::post('delete', 'AsigPrfeAsigsController@delete');
+    Route::get('get', 'AsigPrfeAsigsController@get');
+    Route::get('get-all-object-pagination', 'AsigPrfeAsigsController@getAllObjectPagination');
+});
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'programacion-horario',
+], function ($router) {
+    Route::post('store', 'ProgramacionHorarioController@store');
+    Route::get('get-all-pagination', 'ProgramacionHorarioController@getPagination');
+    Route::post('delete', 'ProgramacionHorarioController@delete');
+    Route::get('get', 'ProgramacionHorarioController@get');
+    Route::get('get-all-object-pagination', 'ProgramacionHorarioController@getAllObjectPagination');
+});
+
+
+// Route::group([
+//     'middleware' => 'api',
+//     'prefix' => 'programacion-horario',
+// ], function ($router) {
+//     Route::post('store', 'ProgramacionHorarioController@store');
+//     Route::get('get-all-pagination', 'ProgramacionHorarioController@getPagination');
+//     Route::post('delete', 'ProgramacionHorarioController@delete');
+//     Route::get('get', 'ProgramacionHorarioController@get');
+// });
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'incripcion-horario-estudiante',
+], function ($router) {
+    Route::post('store', 'IncripcionAsigEsController@store');
+    Route::get('get-all-pagination', 'IncripcionAsigEsController@getPagination');
+    Route::post('delete', 'IncripcionAsigEsController@delete');
+    Route::get('get', 'IncripcionAsigEsController@get');
+    Route::get('get-all-object-pagination', 'IncripcionAsigEsController@getAllObjectPagination');
+});
+

@@ -64,6 +64,7 @@ class MateriaController extends Controller
             array_push($arraIn, $data["id"]);
         }
         Materia::whereIn('id', $arraIn)->delete();
+        $this->refreshDB('materias');
         return response()->json(["success" => true]);
     }
     /**
