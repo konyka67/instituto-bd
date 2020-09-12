@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\EscuelaUsuario;
+use App\Role;
 use App\Usuario;
 use Exception;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -102,7 +103,9 @@ class EscuelaUsuarioController extends Controller
         $escuelaUsuario = EscuelaUsuario::with('programa')->with('escuela')->with('usuario')
             ->whereHas('usuario', function ($query) use ($request) {
                 $query->where('nombre', 'like', "%" . $request->buscar . "%")
-                ->where("tipo", $request->tipo);
+                ->whereHas('roles', function ($query) use ($request) {
+                    $query->where("tipo",$request->tipo);
+                });
             })
             ->join(
                 "usuarios",
@@ -114,6 +117,12 @@ class EscuelaUsuarioController extends Controller
 
         } else {
             $escuelaUsuario = EscuelaUsuario::with('programa')->with('escuela')->with('usuario')
+            ->whereHas('usuario', function ($query) use ($request) {
+                $query->with('roles')
+                ->whereHas('roles', function ($query) use ($request) {
+                    $query->where("tipo",$request->tipo);
+                });
+            })
             ->join(
                 "usuarios",
                 "escuela_usuarios.id_usuario",

@@ -42,7 +42,7 @@ class ProgramaController extends Controller
         }
 
         $programa->nombre = $request["data"]["nombre"];
-        $programa->id_nivel = $request["data"]["nivelAcademico"]["id"];
+        $programa->id_nivel = $request["data"]["nivel_academico"]["id"];
         $programa->save();
         $programa = Programa::with('nivelAcademico')->find($programa->id);
         return response()->json(["success" => true, "data" => $programa]);

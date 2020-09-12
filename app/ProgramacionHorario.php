@@ -47,6 +47,10 @@ public function getFechaFinalAttribute($value)
         return $this->belongsTo(AsigProfeAsig::class,'id_asig_profe','id');
     }
 
+    public function archivoBiblioteca(){
+        return $this->belongsTo(ArchivosBiblioteca::class,'id_asig_profe','id');
+    }
+
     public function estudiantes(){
         return $this->belongsToMany(Usuario::class,'inscripcion_asig_es','id_programacion','id_estudiante')->withTimestamps();
     }

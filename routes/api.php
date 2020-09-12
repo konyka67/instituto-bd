@@ -250,5 +250,53 @@ Route::group([
     Route::post('delete', 'IncripcionAsigEsController@delete');
     Route::get('get', 'IncripcionAsigEsController@get');
     Route::get('get-all-object-pagination', 'IncripcionAsigEsController@getAllObjectPagination');
+    Route::get('get-estudiante','IncripcionAsigEsController@getEstudiante');
 });
 
+Route::group([
+    'prefix' => 'archivo-biblioteca',
+], function ($router) {
+    Route::post('store', 'ArchivoBibliotecaController@store');
+    Route::get('get-all-pagination', 'ArchivoBibliotecaController@getPagination');
+    Route::post('delete', 'ArchivoBibliotecaController@delete');
+    Route::get('get', 'ArchivoBibliotecaController@get');
+    Route::get('get-all-object-pagination', 'ArchivoBibliotecaController@getAllObjectPagination');
+    Route::get('get-all', 'ArchivoBibliotecaController@getAll');
+});
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'asig-estudiante-asigs',
+], function ($router) {
+    Route::post('store', 'AsigEstudianteAsigs@store');
+    Route::get('get-all-pagination', 'AsigEstudianteAsigs@getPagination');
+    Route::post('delete', 'AsigEstudianteAsigs@delete');
+    Route::get('get', 'AsigEstudianteAsigs@get');
+    Route::get('get-all-object-pagination', 'AsigEstudianteAsigs@getAllObjectPagination');
+    Route::get('get-all', 'AsigEstudianteAsigs@getAll');
+});
+
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'matricula',
+], function ($router) {
+    Route::post('store', 'MatriculaController@store');
+    Route::get('get-all-pagination', 'MatriculaController@getPagination');
+    Route::post('delete', 'MatriculaController@delete');
+    Route::get('get', 'MatriculaController@get');
+    Route::get('get-all-object-pagination', 'MatriculaController@getAllObjectPagination');
+    Route::get('get-all', 'MatriculaController@getAll');
+});
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'programacion-horario-estudiante',
+], function ($router) {
+    Route::post('store', 'ProgramacionHorarioEstudiante@store');
+    Route::get('get-all-pagination', 'ProgramacionHorarioEstudiante@getPagination');
+    Route::post('delete', 'ProgramacionHorarioEstudiante@delete');
+    Route::get('get', 'ProgramacionHorarioEstudiante@get');
+    Route::get('get-all-object-pagination', 'ProgramacionHorarioEstudiante@getAllObjectPagination');
+    Route::get('get-all', 'ProgramacionHorarioEstudiante@getAll');
+});

@@ -1,5 +1,6 @@
 <?php
 
+use App\ArchivosBiblioteca;
 use App\AsigProfeAsig;
 use App\Escuela;
 use App\EscuelaUsuario;
@@ -46,24 +47,33 @@ Route::get('/', function () {
     //     $msj->subject($subject);
     //     $msj->to($for);
     // });
-    return "exitoso";
+    // return Usuario::with('roles')->whereHas('roles', function ($query) {
+    //     $query->where('tipo', 'ES');
+    // })->get();
+    $inscripcionAsigEs = InscripcionAsigEs::with('estudiante')->with('programacion.asigProfeAsig.programa')->with('programacion.asigProfeAsig.plan')->with('programacion.asigProfeAsig.salon')->with('programacion.asigProfeAsig.materia')->with('programacion.asigProfeAsig.profesor')
+    ->whereHas('estudiante', function ($query){
+        $query->where('id', 5);
+    })
+    ->select('inscripcion_asig_es.*',DB::raw("concat(id_estudiante,',',id_programacion) as compoundKey"))
+    ->get();
+    return $inscripcionAsigEs;
 });
 Route::get('/convertir', function () {
 
-    // $usuario = json_decode('{"id":"1","nombre":"juan camilo rodriguez","email":"admin@gmail.com"}');
+    // // $usuario = json_decode('{"id":"1","nombre":"juan camilo rodriguez","email":"admin@gmail.com"}');
 
-    // return view('email', ['usuario' => $usuario, 'password' => '123']);
-    $path = public_path('archivos');
-    // echo $path;
-    $converter = new OfficeConverter($path.'/pptx/MonitorPPT1.pptx');
-    $converter->convertTo('output-file.pdf'); //generates pdf file in same directory as test-file.docx
-    $pdf = new \Spatie\PdfToImage\Pdf($path.'/pptx/output-file.pdf');
-    // $pdf->saveImage($path.'/pptx/output-file.jpg');
-    $pages = $pdf->getNumberOfPages();
-    echo $pages;
-    // for($i=1;$i<=$pages;$i++){
-    //     $pdf->setPage(2)->saveImage($path."/pptx/MonitorPPT1$i.jpg");
-    // }
+    // // return view('email', ['usuario' => $usuario, 'password' => '123']);
+    // $path = public_path('archivos');
+    // // echo $path;
+    // $converter = new OfficeConverter($path . '/pptx/MonitorPPT1.pptx');
+    // $converter->convertTo('output-file.pdf'); //generates pdf file in same directory as test-file.docx
+    // $pdf = new \Spatie\PdfToImage\Pdf($path . '/pptx/output-file.pdf');
+    // // $pdf->saveImage($path.'/pptx/output-file.jpg');
+    // $pages = $pdf->getNumberOfPages();
+    // echo $pages;
+    // // for($i=1;$i<=$pages;$i++){
+    // //     $pdf->setPage(2)->saveImage($path."/pptx/MonitorPPT1$i.jpg");
+    // // }
 
 });
 Route::get('/email', function () {
@@ -156,7 +166,7 @@ Route::get('/materia/linea/',  function (Request $request) {
     // ->join('inscripcion_asig_es','programacion_horarios.id','inscripcion_asig_es.id_programacion')
     // ->join('usuarios','inscripcion_asig_es.id_estudiante','usuarios.id')
     // ->first();
-                                                                                        // / with('plan')->with('salon')->with('materia')->with('profesor')
+    // / with('plan')->with('salon')->with('materia')->with('profesor')
     // $inscripcionAsigEs = InscripcionAsigEs::with('programacion.asigProfeAsigs.programa')->get();
     // $inscripcionAsigEs = AsigProfeAsig::with('programaciones.estudiantes')->whereHas('programaciones.estudiantes', function ($query) use ($request) {
     //     $query->where('id', 7);
@@ -181,33 +191,33 @@ Route::get('/materia/linea/',  function (Request $request) {
     // ->select(
     //     'programacion_horarios.*'
     // )->get();
-        // return $programacion;
+    // return $programacion;
 
-        // $inscripcionAsigEs = InscripcionAsigEs::with('estudiante')->with('programacion.asigProfeAsig.programa')->with('programacion.asigProfeAsig.plan')->with('programacion.asigProfeAsig.salon')->with('programacion.asigProfeAsig.materia')->with('programacion.asigProfeAsig.profesor')
-        // ->whereHas('estudiante', function ($query) use ($request) {
-        //     $query->where('id', 7);
-        // })
-        // // ->join('programacion_horarios','inscripcion_asig_es.id_programacion','programacion_horarios.id')
-        // // ->join('asig_profe_asigs','programacion_horarios.id_asig_profe','asig_profe_asigs.id')
-        // ->select('inscripcion_asig_es.*')
-        // ->select()
-        // ->paginate(5);
+    // $inscripcionAsigEs = InscripcionAsigEs::with('estudiante')->with('programacion.asigProfeAsig.programa')->with('programacion.asigProfeAsig.plan')->with('programacion.asigProfeAsig.salon')->with('programacion.asigProfeAsig.materia')->with('programacion.asigProfeAsig.profesor')
+    // ->whereHas('estudiante', function ($query) use ($request) {
+    //     $query->where('id', 7);
+    // })
+    // // ->join('programacion_horarios','inscripcion_asig_es.id_programacion','programacion_horarios.id')
+    // // ->join('asig_profe_asigs','programacion_horarios.id_asig_profe','asig_profe_asigs.id')
+    // ->select('inscripcion_asig_es.*')
+    // ->select()
+    // ->paginate(5);
 
-        // return $inscripcionAsigEs;
+    // return $inscripcionAsigEs;
 
 
-        // $programacionHorario= ProgramacionHorario::with('asigProfeAsig.programa')
-        // ->with('asigProfeAsig.plan')
-        // ->with('asigProfeAsig.salon')
-        // ->with('asigProfeAsig.materia')
-        // ->with('asigProfeAsig.profesor')
-        // ->whereHas('asigProfeAsig.profesor', function ($query) use ($request) {
-        //     $query->where('id',2);
-        // })
-        // ->paginate(5);
-        // $programa = ni
+    // $programacionHorario= ProgramacionHorario::with('asigProfeAsig.programa')
+    // ->with('asigProfeAsig.plan')
+    // ->with('asigProfeAsig.salon')
+    // ->with('asigProfeAsig.materia')
+    // ->with('asigProfeAsig.profesor')
+    // ->whereHas('asigProfeAsig.profesor', function ($query) use ($request) {
+    //     $query->where('id',2);
+    // })
+    // ->paginate(5);
+    // $programa = ni
 
-        // return $programacionHorario;
+    // return $programacionHorario;
 });
 
 
@@ -271,22 +281,21 @@ Route::get('/usuario/roles',  function (Request $request) {
 
     // $planEstudio = PlanEstudio::find(["id_programa" => 1, "id_materia" => 1, "id_plan" => 1]);
     // $planEstudio = PlanEstudio::find(["1","1","1"]);
-        // $planEstudio = PlanEstudio::with('programa')->with('materia')->with('plan')->whereHas('programa', function ($query) {
-        //     $query->where('nombre', 'like', '%ing%');
-        // })->orderBy("id_programa")->get();
-        // $tipo='PR';
-        // $usuariosPagination = Usuario::with('localizacion')->with('roles')
-        // ->whereHas('roles', function ($query) use ($tipo) {
-        //     $query->where('tipo', $tipo);
-        // })->select('usuarios.*')->orderBy("usuarios.id")->paginate(5);
-        return ProgramacionHorario::join('asig_profe_asigs','programacion_horarios.id_asig_profe','asig_profe_asigs.id')
-        ->join('programas','asig_profe_asigs.id_programa','programas.id')
+    // $planEstudio = PlanEstudio::with('programa')->with('materia')->with('plan')->whereHas('programa', function ($query) {
+    //     $query->where('nombre', 'like', '%ing%');
+    // })->orderBy("id_programa")->get();
+    // $tipo='PR';
+    // $usuariosPagination = Usuario::with('localizacion')->with('roles')
+    // ->whereHas('roles', function ($query) use ($tipo) {
+    //     $query->where('tipo', $tipo);
+    // })->select('usuarios.*')->orderBy("usuarios.id")->paginate(5);
+    return ProgramacionHorario::join('asig_profe_asigs', 'programacion_horarios.id_asig_profe', 'asig_profe_asigs.id')
+        ->join('programas', 'asig_profe_asigs.id_programa', 'programas.id')
         ->where('programas.nombre', 'like', "%ing%")
         ->select('programacion_horarios.*')->with('asigProfeAsigs')->whereHas('asigProfeAsigs', function ($query) use ($request) {
             $query->whit('programa');
         })->get();
-
-    });
+});
 
 
 Auth::routes();

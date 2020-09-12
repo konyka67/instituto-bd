@@ -19,7 +19,6 @@ class CreateModalidadProgramasTable extends Migration
             $table->integer('id_programa')->unsigned();
             $table->timestamps();
             $table->unique(['id_modalidad', 'id_programa']);
-
             $table->foreign('id_modalidad')
             ->references('id')
             ->on('modalidads');

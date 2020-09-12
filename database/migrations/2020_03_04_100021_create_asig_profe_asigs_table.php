@@ -21,6 +21,7 @@ class CreateAsigProfeAsigsTable extends Migration
             $table->integer('id_plan')->unsigned();
             $table->integer('id_salon')->unsigned();
             $table->integer('id_materia')->unsigned();
+            $table->tinyInteger('periodo')->unsigned();
             $table->integer('cupos')->unsigned();
             $table->integer('grupo')->unsigned();
             $table->timestamps();

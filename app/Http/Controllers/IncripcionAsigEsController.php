@@ -136,4 +136,15 @@ class IncripcionAsigEsController extends Controller
         return response()->json(["success" => true, "data" => $inscripcionAsigEs]);
     }
 
+    public function getEstudiante(Request $request){
+        $inscripcionAsigEs = InscripcionAsigEs::with('estudiante')->with('programacion.asigProfeAsig.programa')->with('programacion.asigProfeAsig.plan')->with('programacion.asigProfeAsig.salon')->with('programacion.asigProfeAsig.materia')->with('programacion.asigProfeAsig.profesor')
+        ->whereHas('estudiante', function ($query) use ($request) {
+            $query->where('id', $request->data);
+        })
+        ->select('inscripcion_asig_es.*',DB::raw("concat(id_estudiante,',',id_programacion) as compoundKey"))
+        ->get();
+
+        return response()->json(["success" => true, "data" => $inscripcionAsigEs]);
+    }
+
 }

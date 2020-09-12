@@ -14,14 +14,15 @@ class CreateCalificacionCorteEsTable extends Migration
     public function up()
     {
         Schema::create('calificacion_corte_es', function (Blueprint $table) {
-            $table->primary(['id_estudiante', 'id_programa', 'id_materia', 'id_plan'],'calificacion_corte_es_id_estudiante_id_programa');
-            $table->enum('cortes', ['1', '2', '3', '4']);
+            $table->primary(['id_estudiante', 'id_programa', 'id_materia', 'id_plan','periodo','corte'],'calificacion_corte_es_id_estudiante_id_programa');
+            $table->enum('corte', ['1', '2', '3', '4']);
             $table->integer('id_estudiante')->unsigned();
             $table->integer('id_programa')->unsigned();
             $table->integer('id_materia')->unsigned();
             $table->integer('id_plan')->unsigned();
+            $table->tinyInteger('periodo')->unsigned();
             $table->double('calificacion', 1, 1);
-            $table->unique(['id_estudiante', 'id_programa', 'id_materia', 'id_plan'],'calificacion_corte_es_id_estudiante_id_programa');
+            $table->unique(['id_estudiante', 'id_programa', 'id_materia', 'id_plan','periodo','corte'],'calificacion_corte_es_id_estudiante_id_programa');
             $table->timestamps();
             $table->foreign('id_estudiante')
                 ->references('id')
