@@ -12,6 +12,12 @@ class AsigEstudianteAsig extends Model
     public function estudiante(){
         return $this->belongsTo(Usuario::class,'id_estudiante','id');
     }
+    public function profesor(){
+        return $this->belongsTo(Usuario::class,'id_profesor','id');
+    }
+    public function salon(){
+        return $this->belongsTo(Salon::class,'id_salon','id');
+    }
     public function plan(){
         return $this->belongsTo(Plane::class,'id_plan','id');
     }

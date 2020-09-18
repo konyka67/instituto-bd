@@ -30,6 +30,7 @@ class CreateUsuariosTable extends Migration
             $table->dateTime('fechanacimiento')->nullable();
             $table->string('foto')->default("default.png");
             $table -> enum ( 'sex',['F' ,'M','O'])->nullable();
+            $table -> boolean ('activo')->default(false);
             $table->timestamps();
 
             $table->foreign('id_localizacion')

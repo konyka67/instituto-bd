@@ -4,12 +4,15 @@ use App\ArchivosBiblioteca;
 use App\AsigProfeAsig;
 use App\Escuela;
 use App\EscuelaUsuario;
+use App\ForoAulaComentarios;
+use App\ForoAulaMaterias;
 use App\InscripcionAsigEs;
 use App\Localizacion;
 use App\Materia;
 use App\MateriasLinea;
 use App\PlanEstudio;
 use App\ProgramacionHorario;
+use App\ProHorarioEstudiante;
 use App\Role;
 use App\RolUsuario;
 use App\Sede;
@@ -50,13 +53,32 @@ Route::get('/', function () {
     // return Usuario::with('roles')->whereHas('roles', function ($query) {
     //     $query->where('tipo', 'ES');
     // })->get();
-    $inscripcionAsigEs = InscripcionAsigEs::with('estudiante')->with('programacion.asigProfeAsig.programa')->with('programacion.asigProfeAsig.plan')->with('programacion.asigProfeAsig.salon')->with('programacion.asigProfeAsig.materia')->with('programacion.asigProfeAsig.profesor')
-    ->whereHas('estudiante', function ($query){
-        $query->where('id', 5);
-    })
-    ->select('inscripcion_asig_es.*',DB::raw("concat(id_estudiante,',',id_programacion) as compoundKey"))
-    ->get();
-    return $inscripcionAsigEs;
+    // $foro = ForoAulaMaterias::with('asigProfeAsigs')->with('profesor')->get();
+    // return $foro;
+
+    // $foro = ForoAulaComentarios::with('foro')->with('usuario')->with('comentarioHijo.comentarioHijo.comentarioHijo.comentarioHijo.comentarioHijo')->wherenull('id_jerarquia_comentario')->get();
+    // return $foro;
+
+    // $foro = ForoAulaComentarios::with('foro')->with('usuario')
+    // ->with('comentarioHijo.comentarioHijo.comentarioHijo.comentarioHijo.comentarioHijo')
+    // ->with('comentarioHijo.comentarioHijo.comentarioHijo.comentarioHijo.usuario')
+    // ->with('comentarioHijo.comentarioHijo.comentarioHijo.usuario')
+    // ->with('comentarioHijo.comentarioHijo.usuario')
+    // ->with('comentarioHijo.usuario')
+    // ->wherenull('id_jerarquia_comentario')
+    // ->where('id_foro', 1)->orderby('id', 'desc')->get();
+    $foro = ForoAulaMaterias::with("asigProfeAsig")->with("asigProfeAsig.materia")->with("profesor")->join('asig_profe_asigs','foro_aula_materias.id_asig_profe_asigs','asig_profe_asigs.id')
+    ->join('asig_estudiante_asigs',function($join){
+        $join->on('asig_profe_asigs.id_programa','=','asig_estudiante_asigs.id_programa')
+        ->on('asig_profe_asigs.id_profesor','=','asig_estudiante_asigs.id_profesor')
+        ->on('asig_profe_asigs.id_plan','=','asig_estudiante_asigs.id_plan')
+        ->on('asig_profe_asigs.id_salon','=','asig_estudiante_asigs.id_salon')
+        ->on('asig_profe_asigs.id_materia','=','asig_estudiante_asigs.id_materia');
+    })->select('foro_aula_materias.*')->get();
+
+    // $foro = ForoAulaMaterias::join('asig_profe_asigs','foro_aula_materias.id_asig_profe_asigs','asig_profe_asigs.id')
+    // ->get();
+    return $foro;
 });
 Route::get('/convertir', function () {
 

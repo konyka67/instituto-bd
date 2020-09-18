@@ -15,12 +15,13 @@ class CreateEscuelaUsuariosTable extends Migration
     {
         Schema::create('escuela_usuarios', function (Blueprint $table) {
             $table->primary(['id_escuela', 'id_programa','id_usuario']);
+            $table->unique(['id_escuela', 'id_programa','id_usuario']);
             $table->integer('id_programa')->unsigned();
             $table->integer('id_usuario')->unsigned();
             $table->integer('id_escuela')->unsigned();
             $table->integer('anio_vigencia_inicial');
             $table->integer('anio_vigencia_final');
-            $table->unique(['id_escuela', 'id_programa','id_usuario']);
+            $table -> boolean ('activo')->default(false);
             $table->timestamps();
             $table->foreign('id_escuela')
                 ->references('id')

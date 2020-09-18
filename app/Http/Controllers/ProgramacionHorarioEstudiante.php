@@ -37,14 +37,13 @@ class ProgramacionHorarioEstudiante extends Controller
     {
         $programacionEstudiante = new ProHorarioEstudiante();
 
-        if(!empty($request["data"]["id"])){
+        if (!empty($request["data"]["id"])) {
             $programacionEstudiante = $programacionEstudiante->find($request["data"]["id"]);
         }
         $programacionEstudiante->id_estudiante = $request["data"]["estudiante"]["id"];
         $programacionEstudiante->id_programacion = $request["data"]["programacion_horario"]["id"];
         $programacionEstudiante->save();
         return response()->json(["success" => true, "data" => $programacionEstudiante::with('estudiante')->with('programacionHorario')->with('programacionHorario.asigProfeAsig.profesor')->with('programacionHorario.asigProfeAsig.salon')->with('programacionHorario.asigProfeAsig.materia')->with('programacionHorario.asigProfeAsig')->first()]);
-
     }
     public function getPagination(Request $request)
     {
@@ -54,6 +53,38 @@ class ProgramacionHorarioEstudiante extends Controller
             })->paginate(5)]);
         }
         return response()->json(["success" => true, "data" => ProHorarioEstudiante::with('estudiante')->with('programacionHorario')->with('programacionHorario.asigProfeAsig.profesor')->with('programacionHorario.asigProfeAsig.salon')->with('programacionHorario.asigProfeAsig.materia')->with('programacionHorario.asigProfeAsig')->paginate(5)]);
+    }
+
+
+    public function getAllObjectPagination(Request $request)
+    {
+
+        if (!empty($request->buscar) && $request->buscar !== 'undefined') {
+            $inscripcionAsigEs = ProHorarioEstudiante::with('estudiante')->with('programacionHorario')->with('programacionHorario.asigProfeAsig.profesor')->with('programacionHorario.asigProfeAsig.salon')->with('programacionHorario.asigProfeAsig.materia')->with('programacionHorario.asigProfeAsig')
+                ->whereHas('estudiante', function ($query) use ($request) {
+                    $query->where('id', $request->data)->where('activo', 1);
+                })
+                ->whereHas('programacionHorario.asigProfeAsig.materia', function ($query) use ($request) {
+                    $query->where('nombre', 'like', "%" . $request->buscar . "%");
+                })->paginate(5);
+        } else {
+
+            $inscripcionAsigEs = ProHorarioEstudiante::with('estudiante')->with('programacionHorario')->with('programacionHorario.asigProfeAsig.profesor')->with('programacionHorario.asigProfeAsig.salon')->with('programacionHorario.asigProfeAsig.materia')->with('programacionHorario.asigProfeAsig')
+                ->whereHas('estudiante', function ($query) use ($request) {
+                    $query->where('id', $request->data)->where('activo', 1);
+
+                })
+                ->paginate(5);
+        }
+        return response()->json(["success" => true, "data" => $inscripcionAsigEs]);
+    }
+
+    public function get(Request $request)
+    {
+        $programacionHorarioEstudiante = ProHorarioEstudiante::with('estudiante')->with('programacionHorario')->with('programacionHorario.asigProfeAsig.profesor')->with('programacionHorario.asigProfeAsig.salon')->with('programacionHorario.asigProfeAsig.materia')->with('programacionHorario.asigProfeAsig')->whereHas('estudiante', function ($query) use ($request) {
+            $query->where('activo', 1);
+        })->find($request->id);
+        return response()->json(["success" => true, "data" => $programacionHorarioEstudiante]);
     }
     public function delete(Request $request)
     {

@@ -47,6 +47,8 @@ class AsigEstudianteAsigs extends Controller
         $asigEstudianteAsig->id_plan =$request->data["plan"]["id"];
         $asigEstudianteAsig->periodo =$request->data["periodo"];
         $asigEstudianteAsig->ano_gravable =$request->data["ano_gravable"];
+        $asigEstudianteAsig->id_profesor =$request->data["profesor"]["id"];
+        $asigEstudianteAsig->id_salon =$request->data["salon"]["id"];
         $asigEstudianteAsig->save();
         return response()->json(["success" => true, "data" => $asigEstudianteAsig->with('programa')->with('plan')->with('materia')->with('estudiante')->first()]);
     }
@@ -54,11 +56,11 @@ class AsigEstudianteAsigs extends Controller
     public function getPagination(Request $request)
     {
         if (!empty($request->buscar) && $request->buscar !== 'undefined') {
-            return response()->json(["success" => true, "data" => AsigEstudianteAsig::with('programa')->with('plan')->with('materia')->with('estudiante')->whereHas('estudiante', function ($query) use ($request) {
+            return response()->json(["success" => true, "data" => AsigEstudianteAsig::with('programa')->with('plan')->with('materia')->with('estudiante')->with('profesor')->with('salon')->whereHas('estudiante', function ($query) use ($request) {
                 $query->where('nombre', 'like', "%" . $request->buscar . "%");
             })->paginate(5)]);
         }
-        return response()->json(["success" => true, "data" => AsigEstudianteAsig::with('programa')->with('plan')->with('materia')->with('estudiante')->paginate(5)]);
+        return response()->json(["success" => true, "data" => AsigEstudianteAsig::with('programa')->with('plan')->with('materia')->with('estudiante')->with('salon')->with('profesor')->paginate(5)]);
     }
     public function delete(Request $request)
     {

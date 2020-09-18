@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\AsigProfeAsig;
 use App\InscripcionAsigEs;
+use App\ProHorarioEstudiante;
 use App\Usuario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -103,48 +104,46 @@ class IncripcionAsigEsController extends Controller
     {
 
         if (!empty($request->buscar) && $request->buscar !== 'undefined') {
-            $inscripcionAsigEs = InscripcionAsigEs::with('estudiante')->with('programacion.asigProfeAsig.programa')->with('programacion.asigProfeAsig.plan')->with('programacion.asigProfeAsig.salon')->with('programacion.asigProfeAsig.materia')->with('programacion.asigProfeAsig.profesor')
+            $inscripcionAsigEs = ProHorarioEstudiante::with('estudiante')->with('programacionHorario')->with('programacionHorario.asigProfeAsig.programa')->with('programacionHorario.asigProfeAsig.plan')->with('programacionHorario.asigProfeAsig.salon')->with('programacionHorario.asigProfeAsig.materia')->with('programacionHorario.asigProfeAsig.profesor')
                 ->whereHas('estudiante', function ($query) use ($request) {
                     $query->where('id', $request->data);
                 })
-                ->whereHas('programacion.asigProfeAsig.materia', function ($query) use ($request) {
+                ->whereHas('programacionHorario.asigProfeAsig.materia', function ($query) use ($request) {
                     $query->where('nombre', 'like', "%" . $request->buscar . "%");
-                })
-                ->select('inscripcion_asig_es.*',DB::raw("concat(id_estudiante,',',id_programacion) as compoundKey"))
-                ->paginate(5);
+                })->paginate(5);
         } else {
 
-            $inscripcionAsigEs = InscripcionAsigEs::with('estudiante')->with('programacion.asigProfeAsig.programa')->with('programacion.asigProfeAsig.plan')->with('programacion.asigProfeAsig.salon')->with('programacion.asigProfeAsig.materia')->with('programacion.asigProfeAsig.profesor')
+            $inscripcionAsigEs = ProHorarioEstudiante::with('estudiante')->with('programacionHorario')->with('programacionHorario.asigProfeAsig.programa')->with('programacionHorario.asigProfeAsig.plan')->with('programacion.asigProfeAsig.salon')->with('programacionHorario.asigProfeAsig.materia')->with('programacionHorario.asigProfeAsig.profesor')
                 ->whereHas('estudiante', function ($query) use ($request) {
                     $query->where('id', $request->data);
                 })
-                ->select('inscripcion_asig_es.*',DB::raw("concat(id_estudiante,',',id_programacion) as compoundKey"))
                 ->paginate(5);
         }
         return response()->json(["success" => true, "data" => $inscripcionAsigEs]);
     }
 
-    public function get(Request $request){
+    public function get(Request $request)
+    {
         $idEstudiante = explode(",", $request->id)[0];
         $idProgrmacion = explode(",", $request->id)[1];
 
         $inscripcionAsigEs = InscripcionAsigEs::with('estudiante')->with('programacion.asigProfeAsig.programa')->with('programacion.asigProfeAsig.plan')->with('programacion.asigProfeAsig.salon')->with('programacion.asigProfeAsig.materia')->with('programacion.asigProfeAsig.profesor')
-        ->where('id_estudiante',$idEstudiante)->where('id_programacion',$idProgrmacion)
-        ->select('inscripcion_asig_es.*',DB::raw("concat(id_estudiante,',',id_programacion) as compoundKey"))
-        ->first();
+            ->where('id_estudiante', $idEstudiante)->where('id_programacion', $idProgrmacion)
+            ->select('inscripcion_asig_es.*', DB::raw("concat(id_estudiante,',',id_programacion) as compoundKey"))
+            ->first();
 
         return response()->json(["success" => true, "data" => $inscripcionAsigEs]);
     }
 
-    public function getEstudiante(Request $request){
+    public function getEstudiante(Request $request)
+    {
         $inscripcionAsigEs = InscripcionAsigEs::with('estudiante')->with('programacion.asigProfeAsig.programa')->with('programacion.asigProfeAsig.plan')->with('programacion.asigProfeAsig.salon')->with('programacion.asigProfeAsig.materia')->with('programacion.asigProfeAsig.profesor')
-        ->whereHas('estudiante', function ($query) use ($request) {
-            $query->where('id', $request->data);
-        })
-        ->select('inscripcion_asig_es.*',DB::raw("concat(id_estudiante,',',id_programacion) as compoundKey"))
-        ->get();
+            ->whereHas('estudiante', function ($query) use ($request) {
+                $query->where('id', $request->data);
+            })
+            ->select('inscripcion_asig_es.*', DB::raw("concat(id_estudiante,',',id_programacion) as compoundKey"))
+            ->get();
 
         return response()->json(["success" => true, "data" => $inscripcionAsigEs]);
     }
-
 }

@@ -61,11 +61,6 @@ class ProgramacionHorarioController extends Controller
             ->whereHas('asigProfeAsig.programa', function ($query) use ($request) {
                 $query->where('nombre', 'like', "%" . $request->buscar . "%");
             })
-            // ->select(
-            //     'programacion_horarios.*',
-            //     DB::raw('TIME_FORMAT(programacion_horarios.hora_inicial,"%H:%i %p") as hora_inicial'),
-            //     DB::raw('TIME_FORMAT(programacion_horarios.hora_final,"%H:%i %p") as hora_final')
-            // )
             ->paginate(5);
         }else{
             $programacionHorario= ProgramacionHorario::with('asigProfeAsig.programa')
@@ -73,6 +68,9 @@ class ProgramacionHorarioController extends Controller
             ->with('asigProfeAsig.salon')
             ->with('asigProfeAsig.materia')
             ->with('asigProfeAsig.profesor')
+            ->whereHas('asigProfeAsig.profesor', function ($query) use ($request) {
+                $query->where('activo', 1);
+            })
             ->paginate(5);
         }
         return response()->json(["success" => true, "data" => $programacionHorario]);
@@ -90,7 +88,7 @@ class ProgramacionHorarioController extends Controller
                 $query->where('nombre', 'like', "%" . $request->buscar . "%");
             })
             ->whereHas('asigProfeAsig.profesor', function ($query) use ($request) {
-                $query->where('id',$request->data);
+                $query->where('id',$request->data)->where('activo', 1);
             })
             // ->select('programacion_horarios.*',DB::raw("concat(".$request->data.",',',id) as compoundKey")
 
@@ -102,9 +100,8 @@ class ProgramacionHorarioController extends Controller
             ->with('asigProfeAsig.materia')
             ->with('asigProfeAsig.profesor')
             ->whereHas('asigProfeAsig.profesor', function ($query) use ($request) {
-                $query->where('id',$request->data);
+                $query->where('id',$request->data)->where('activo', 1);
             })
-            ->select('programacion_horarios.*',DB::raw("concat(".$request->data.",',',id) as compoundKey"))
             ->paginate(5);
         }
         return response()->json(["success" => true, "data" => $programacionHorario]);
@@ -126,7 +123,11 @@ class ProgramacionHorarioController extends Controller
         ->with('asigProfeAsig.plan')
         ->with('asigProfeAsig.salon')
         ->with('asigProfeAsig.materia')
-        ->with('asigProfeAsig.profesor')->find($request->id);
+        ->with('asigProfeAsig.profesor')
+        ->whereHas('asigProfeAsig.profesor', function ($query) use ($request) {
+            $query->where('activo', 1);
+
+        })->find($request->id);
         return response()->json(["success" => true , 'data'=>$programacionHorario]);
     }
     /**

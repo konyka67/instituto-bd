@@ -266,6 +266,15 @@ Route::group([
 
 Route::group([
     'middleware' => 'api',
+    'prefix' => 'archivo-biblioteca-jwt',
+], function ($router) {
+    Route::post('store', 'ArchivoBibliotecaController@store');
+    Route::get('get-all-pagination', 'ArchivoBibliotecaController@getPagination');
+    Route::post('delete', 'ArchivoBibliotecaController@delete');
+});
+
+Route::group([
+    'middleware' => 'api',
     'prefix' => 'asig-estudiante-asigs',
 ], function ($router) {
     Route::post('store', 'AsigEstudianteAsigs@store');
@@ -299,4 +308,25 @@ Route::group([
     Route::get('get', 'ProgramacionHorarioEstudiante@get');
     Route::get('get-all-object-pagination', 'ProgramacionHorarioEstudiante@getAllObjectPagination');
     Route::get('get-all', 'ProgramacionHorarioEstudiante@getAll');
+});
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'foro-aula-materia',
+], function ($router) {
+    Route::post('store', 'ForoAulaMateriaController@store');
+    Route::get('get-all-pagination', 'ForoAulaMateriaController@getPagination');
+    Route::post('delete', 'ForoAulaMateriaController@delete');
+    Route::get('get', 'ForoAulaMateriaController@get');
+    Route::get('get-all-object-pagination', 'ForoAulaMateriaController@getAllObjectPagination');
+    Route::get('get-all', 'ForoAulaMateriaController@getAll');
+});
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'foro-aula-comentario',
+], function ($router) {
+    Route::post('store', 'ForoAulaComentarioController@store');
+    Route::get('get-all-pagination', 'ForoAulaComentarioController@getPagination');
+    Route::get('get-all', 'ForoAulaComentarioController@getAll');
 });

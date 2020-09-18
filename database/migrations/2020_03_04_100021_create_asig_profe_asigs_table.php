@@ -24,6 +24,7 @@ class CreateAsigProfeAsigsTable extends Migration
             $table->tinyInteger('periodo')->unsigned();
             $table->integer('cupos')->unsigned();
             $table->integer('grupo')->unsigned();
+            $table->boolean('activo')->default(false);
             $table->timestamps();
             $table->foreign('id_profesor')
             ->references('id')

@@ -91,6 +91,20 @@ class ArchivoBibliotecaController extends Controller
     }
 
     /**
+     *
+     */
+    public function getPagination(Request $request){
+
+        $archivo = ArchivosBiblioteca::with("usuario")->with("salon")->with("programacionHorario")->with('integrantes')
+        ->whereHas('salon', function ($query) use ($request) {
+            $query->where('id',$request["id_salon"]);
+        })
+        ->where("tipo",$request["tipo"])
+        ->where("extension",$request["extension"])->paginate(8);
+        return response()->json(["success" => true, "data" => $archivo]);
+    }
+
+    /**
      * Display the specified resource.
      *
      * @param  int  $id

@@ -22,6 +22,9 @@ class CreateAsigEstudianteAsigsTable extends Migration
             $table->integer('id_plan')->unsigned();
             $table->tinyInteger('periodo')->unsigned();
             $table->year('ano_gravable')->unsigned();
+            $table->boolean('activo')->default(false);
+            $table->integer('id_profesor')->unsigned()->nullable();
+            $table->integer('id_salon')->unsigned()->nullable();
             $table->timestamps();
             $table->foreign('id_area')
                 ->references('id')
@@ -38,6 +41,14 @@ class CreateAsigEstudianteAsigsTable extends Migration
             $table->foreign('id_estudiante')
                 ->references('id')
                 ->on('usuarios');
+
+                $table->foreign('id_profesor')
+                ->references('id')
+                ->on('usuarios');
+
+                $table->foreign('id_salon')
+                ->references('id')
+                ->on('salons');
         });
     }
 
